@@ -1,10 +1,58 @@
-<html><body>
-<h1>Egg-SGML</h1>
+﻿<!doctype html><html><body>
 
-In the tumultuous aftermath of the world discovering that HTML was based on a standard that was not freely available, and had not formalized the document tree though it had brought it about, a few things seem to have gotten lost.
+<h1>Egg-SGML (PHP)</h1>
+
+Egg-SGML is little more than a depth-first tree search routine. Its usefulness is in separating code from data.
+
+<h2>Overview</h2>
+
+In the turmoil which followed the discovery that HTML was based on a standard which was not freely available, a few things seem to have gotten lost. <p/>
+
+XML achieved two things: standardizing the underlying structure of HTML, and formalizing the document tree—something which SGML had brought about, but was rather lax over. <p/>
+
+However, the requirement of compatibility meant that web-browsers continued, and still continue, to accept as input whatever they can see their way to making something out of. One might say that the strictness of XML is not wanted. <p/>
+
+DTD's have limited value. They are not useful to those who need to hand-craft an XML document. They would have been useful to parse an SGML document, to know which tags are self-closing, but XML solved this problem by making sure that the document tree is apparent without any further context. <p/>
+
+<h2>Example</h2>
+
+It will be of little avail to try to explain the operation without an example website. Copy the sample subdirectory, and "1/templates.php" (into a "1" subdirectory), into an Apache compatible webserver with PHP enabled. <p/>
+
+Alternatively, these pages are hosted at <a href="https://egg-sgml.killtheworld.co.za/">egg-sgml.killtheworld.co.za</a>, but PLEASE NOTE: the owner of the base domain is an opinionated pratt (by his own admission) and i make use of his domain merely as a matter of necessity.
+
+<!--
+....
 <p/>
-It must be noted that the clarity (and strictness) of the XML standard was not appreciated, and web-browsers continued to parse whatever they could see their way to making something out of.
+
+It is relatively easy to make a liberal XML parser (as exist in web-browsers), but the point of XML was to formalize the document tree; something which SGML had brought about but had been rather lax over. <p/>
+
+DTD's are not useful to those wanting to hand craft an XML document. Reference documents and informal communication are absolutely necessary.
+.
+
+tumultuous aftermath of the world discovering that HTML was based on a standard that was not freely available, and had not formalized the document tree though it had brought it about, a few things seem to have gotten lost. <p/>
+
+It must be noted that the clarity (and strictness) of the XML standard was not appreciated, and web-browsers continued to parse whatever they could see their way to making something out of. <p/>
+
+It must also be noted that DTD's are only useful for verification, and in practice verification only happens during loading. They are not useful for those wanting to hand-craft an XML document. With an SGML document they would have been useful to know when a tag is self-closing, but the XML standard quite sensibly enforces that all tags must be explicitly closed: so that the document tree is apparent without any further context. <p/> 
+
+XML Namespaces were created in order to solve the problem of the meaning of tags being contextual. However, tags must be contextual, even within a document.
+
+<h2>Tag Consumers</h2>
+
+Tag Consumer objects can add to the document tree, and simultaneously stack a new consumer. The most basic tag consumer is one which serializes the document node. The structure of a consumer will be detailed with the tree search routine later.
 <p/>
-It must also be noted that DTD's are only useful for verification, and in practice verification only happens during loading. They are not useful for those wanting to hand-craft an XML document. With an SGML document they would have been useful to know when a tag is self-closing, but the XML standard quite sensibly enforces that all tags must be explicitly closed: so that the document tree is apparent without any further context.
+The builtin tag consumer handles the following tags:
+<p/>
+<h3>a.site</h3>
+Allow a navigation link to have a css class assigned only when that page is being viewed.
+<h3>include</h3>
+Add an external document tree under this tag.
+<h3>record</h3>
+Store the subtree of this node in an associative array with key from the "id" attribute.
+<h3>play</h3>
+Add the node from the corresponding record tag (with same "id" attribute) under this tag.
+<p/> The use of the above tags allows us to, for example, store the header and footer in one complete document tree, which is included by individual pages. 
+
+-->
 
 </body></html>
