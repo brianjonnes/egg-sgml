@@ -153,9 +153,9 @@ class tgc_sgml_source {
 	function consume( $q, $end, $w ) {
 		if( $end ) {
 			if( $w->firstChild != null ) {
-				$q->write('<b>&lt;/<u>' . $w->tagName . '</u>></b>'); }
+				$q->write('<b>&lt;/<u>' . $w->nodeName . '</u>></b>'); }
 			return 1; }
-		$q->write('<b>&lt;<u>' . $w->tagName . '</u>');
+		$q->write('<b>&lt;<u>' . $w->nodeName . '</u>');
 		for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
 			$q->write(' ' . $w->attributes->item($m)->name);
 			if( $w->attributes->item($m)->value != null ) {
@@ -165,6 +165,14 @@ class tgc_sgml_source {
 			$q->write('/'); }
 		$q->write('></b>');
 		return 2; }
+}
+
+function strmerge( $a, $b, $c ) {
+	if( $a != '' ) {
+		if( $b != '' ) {
+			return $a . $c . $b;
+		} return $a;
+	} return $b;
 }
 
 class tgc_test {
@@ -178,18 +186,25 @@ class tgc_test {
 	function repeat( $q ) {
 		return 0; }
 	function consume( $q, $end, $w ) {
-		if( $w->tagName == 'tag' ) {
+		# local $m, $f
+		if( $w->nodeName == 'tag' ) {
 			return 2; }
-		if( $w->tagName == 'a.site' ) {
+		if( $w->nodeName == 'a.site' ) {
 			if( $end ) {
 				if( $w->firstChild != null ) {
 					$q->write('</a>'); }
 				return 1; }
 			$q->write('<a');
+			if( $w->getAttribute('href') == $this->self_href ) {
+				$f = strmerge( $w->getAttribute('activeclass'), $w->getAttribute('class'), ' ' );
+			} else {
+				$f = $w->getAttribute('class');
+			}
+			if( $f != '' ) {
+				$q->write(' class="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $f ) ) . '"' );
+			}
 			for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
 				if( $w->attributes->item($m)->name == 'activeclass' ) {
-					if( $w->getAttribute('href') == $this->self_href ) {
-						$q->write(' class="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
 				} else {
 					$q->write(' ' . $w->attributes->item($m)->name);
 					if( $w->attributes->item($m)->value != null ) {
@@ -200,47 +215,59 @@ class tgc_test {
 				$q->write('/'); }
 			$q->write('>');
 			return 2; }
-		if( $w->tagName == 'include' ) {
+		if( $w->nodeName == 'include' ) {
 			if ($end) return 1;
 			$m = new DomDocument;
 			$m->load( $this->path . "/" . $w->getAttribute('path') );
 			$this->NF = newframe(new tgc,$q,$m);
 			return 3; }
-		if( $w->tagName == 'showsource' ) {
+		if( $w->nodeName == 'showsource' ) {
 			if ($end) return 1;
 			$m = new DomDocument;
 			$m->load( $this->path . "/" . $w->getAttribute('path') );
 			$this->NF = newframe(new tgc_sgml_source,$q,$m);
 			return 3; }
-		if( $w->tagName == 'showphp' ) {
+		if( $w->nodeName == 'showphp' ) {
 			if ($end) return 1;
 			$m = file_get_contents($this->path . "/" . $w->getAttribute('path'));
 			$q->write(str_replace("\n", "<br/>", str_replace("\t", "&nbsp; &nbsp; &nbsp; ", str_replace("<","&lt;", str_replace( "&", "&amp;", $m ) ) ) ) );
 			return 2; }
-		if( $w->tagName == 'redirect' ) {
+		if( $w->nodeName == 'redirect' ) {
 			if ($end) return 1;
 			header('Location:' . $w->getAttribute('location'));
 			return 1; }
-		if( $w->tagName == 'record' ) {
+		if( $w->nodeName == 'record' ) {
 			if ($end) return 1;
 			$this->clips[$w->getAttribute('id')] = $w;
 			return 1; }
-		if( $w->tagName == 'play' ) {
+		if( $w->nodeName == 'play' ) {
 			if ($end) return 1;
 			if( array_key_exists( $w->getAttribute('id'), $this->clips ) ) {
 				$this->NF = newframe(new tgc,$q,$this->clips[$w->getAttribute('id')]);
 				return 3; }
 			return 1; }
-		if( $w->tagName == 'servervariable' ) {
+		if( $w->nodeName == 'servervariable' ) {
 			if ($end) return 1;
 			$q->write(str_replace('<','&lt;',str_replace('&','&amp;',$_SERVER[$w->getAttribute('name')])));
 			return 1; }
+		if( $w->nodeName == 'script' ) {
+			$q->write('<' . $w->nodeName);
+			for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
+				$q->write(' ' . $w->attributes->item($m)->name);
+				if( $w->attributes->item($m)->value != null ) {
+					$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
+			}
+			$q->write('>');
+			if( $w->firstChild != null ) {
+				$q->write( $w->firstChild->value ); }
+			$q->write('</script>');
+			return 1; }
 		if( $end ) {
 			if( $w->firstChild != null ) {
-				$q->write('</' . $w->tagName . '>'); }
+				$q->write('</' . $w->nodeName . '>'); }
 			return 1; }
-		$q->write('<' . $w->tagName);
-		for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
+		$q->write('<' . $w->nodeName);
+		if( $w->attributes ) for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
 			$q->write(' ' . $w->attributes->item($m)->name);
 			if( $w->attributes->item($m)->value != null ) {
 				$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
@@ -253,6 +280,7 @@ class tgc_test {
 
 function main($doc,$self_href) {
 	$d = new DomDocument();
+	$d->strictErrorChecking = false;
 	$d->load($doc);
 	$k = newframe(new tgc_test(dirname(__FILE__,2),$self_href), new echo_out, $d);
 	$k->P = null;
