@@ -1,15 +1,15 @@
 <tag><record id="title">Egg-SGML: Source Code</record><record id="content">
-    This is an example website for Egg-SGML, pronounced X-Gimmel.
- <p/>
-	Here is the sourcecode of  the home page:
-<p/>
-	<showsource path="home"/>
-<p/>
-	Here is the sourcecode of header_footer.include:
-<p/>
+The following are the source files not already given on the explanation page. <p/>
+	<b>header_footer.include:</b><br/>
 	<showsource path="header_footer.include"/>
 <p/>
-	Finally, the source code of this page:
-<p/>
+	<b>egg-sourced (this page)</b><br/>
 	<showsource path="egg-sourced"/>
+<p/>
+	<b>.htaccess</b><br/>
+	<showphp path=".htaccess"/>
+<p/>
+	<b>templates.php</b><br/>
+	<showphp path="1/templates.php"/>
+	
 </record><include path="header_footer.include"/></tag>
