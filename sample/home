@@ -1,5 +1,6 @@
 <tag><record id="title">Egg-SGML sample</record><record id="content">
-    This is an example website for Egg-SGML, pronounced X-Gimmel.
- <p/>
-	See the source code <a href="/egg-sourced">here</a>.
+    This is an example website for Egg-SGML.
+<p/>To start off, this is the source document of the page you are viewing:<br/>
+<div class="source"><div class="tweakA"></div><showsource path="home"/><div class="tweakB"/></div>
+<p/>This will be best contrasted with another page, which will be done with the explanation.
 </record><include path="header_footer.include"/></tag>

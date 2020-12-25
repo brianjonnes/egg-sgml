@@ -251,6 +251,7 @@ class tgc_test {
 			$q->write(str_replace('<','&lt;',str_replace('&','&amp;',$_SERVER[$w->getAttribute('name')])));
 			return 1; }
 		if( $w->nodeName == 'script' ) {
+			if ($end) return 1;
 			$q->write('<' . $w->nodeName);
 			for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
 				$q->write(' ' . $w->attributes->item($m)->name);
@@ -273,7 +274,10 @@ class tgc_test {
 				$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
 		}
 		if( $w->firstChild == null ) {
-			$q->write('/'); }
+			if( $w->nodeName == 'div' || $w->nodeName == 'i' ) {
+				$q->write('></' . $w->nodeName);
+			} else { $q->write('/'); }
+		}
 		$q->write('>');
 		return 2; }
 }

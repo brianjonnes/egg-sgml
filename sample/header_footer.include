@@ -5,6 +5,9 @@
 	<title><play id="title"/></title>
   </head>
 	<style type="text/css">
+		.source { position: relative; padding: 0 0 1px 0; }
+		.source .tweakA { width: 50%; border-top: 1px solid #444; }
+		.source .tweakB { position: absolute; bottom: 0; height: 1px; right: 0; width: 67%; border-bottom: 1px solid #444; }
 	</style>
 <body>
 
