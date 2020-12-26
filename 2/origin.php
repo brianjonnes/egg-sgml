@@ -48,6 +48,8 @@ class tgc {
 		return 0; }
 	function repeat( $q ) {
 		return 0; }
+	function consume_text( $q, $x ) {
+		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
 		return 0; }
 }
@@ -71,7 +73,7 @@ function test($F) {
 				break; }
 //+++
 			if ( $x->nodeType == 3 ) {
-				$F->q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x->data ) ) );
+				$F->c->consume_text( $F->q, $x->data );
 				break; }
 //			if x.nodeType == 7:
 //				F_ = F

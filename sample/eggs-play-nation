@@ -1,20 +1,18 @@
-<tag><record id="title">Egg-SGML Test: Explanation</record><record id="content">
+<record id="title">Delving into Egg-SGML</record><record id="content">
 
-We will start off by comparing the source document for the home page, with that of this page. <p/>
-<b>Home Page</b><br/>
-<showsource path="home"/>
+As with the home page, and as mentioned there, we start off with the source document of this explanation page: <p/>
+<div class="source"><div class="tweakA"/><showsource path="eggs-play-nation"/><div class="tweakB"/></div>
+<p/><p/>
+For convenient reference, we repeat the home page document:<br>
+<div class="source"><div class="tweakA"/><showsource path="home"/><div class="tweakB"/></div>
+<p/><p/>
+Both documents have &lt;record id="title">, then &lt;record id="content">, followed by the same &lt;include>. <u>Reading through an HTML document from start to finish is following a depth-first search of the document tree.</u>
+<p/> Understanding that &lt;record> produces no output, we will now look at the included file (header_footer.include):
+<div class="source"><div class="tweakA"/><showsource path="header_footer.include"/><div class="tweakB"/></div>
+<p/><p/>
+Looking carefully you will now find &lt;play> tags corresponding to the &lt;record> tags seen earlier. Further &lt;include> tags have been used here to reduce the length of this page.
 <p/>
-<b>This explanation page</b><br/>
-<showsource path="eggs-play-nation"/>
-<p/>
-Firstly, &lt;tag> is a workaround tag and does nothing--more on that later. Note that both documents have &lt;record id="title"> and &lt;record id="content">, followed by an include.
-<p/>
-The documents are processed by a depth-first tree-search routine, which require a root tag consumer. The tag consumer used here responds to a &lt;record> tag by storing its subtree in an associative array (using "id" as the key). <p/>
-Tag consumers may skip over a tag (in the case of &lt;record> nothing is output), or may stack a subtree and a new consumer, which is what occurs in the case of &lt;play>. <p/>
-The &lt;include> tag is similar to &lt;play> in that a sub-tree is stacked, but in this case it comes from an external document. <p/>
-Finally, this sample site makes use of a tag &lt;a.site> which adapts its css class according to whether the href is pointing to the current page or not (activeclass attribute). <p/>
-For completeness, the remaining source files are given <a href="/egg-sourced">here</a>.
-
+The remaining source files (egg-sgml and php) are given <a href="egg-sourced">here</a>.
 <!--
 	The following server-processed tags are used here:
 <h4>record, play</h4>
@@ -28,4 +26,4 @@ Highlights a link with a given css class if the page is active.
 <h4>tag</h4>
 This tag does nothing except to satisfy the PHP XML parser of one root per document.
 -->
-</record><include path="header_footer.include"/></tag>
+</record><include path="header_footer.include"/>

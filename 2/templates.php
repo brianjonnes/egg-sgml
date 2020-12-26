@@ -19,11 +19,11 @@
 include 'eggsgml.php';
 include 'eggsgml-loader.php';
 include 'origin.php';
-include 'tgc_test.php';
+include 'tgc_generic.php';
 
 function main($doc,$self_href) {
 	$d = load_eggsgml_file( $doc );
-	$k = newframe(new tgc_test(dirname(__FILE__,2),$self_href), new echo_out, $d);
+	$k = newframe(new tgc_generic(dirname(__FILE__,2),$self_href), new echo_out, $d);
 	$k->P = null;
 	test($k);
 }

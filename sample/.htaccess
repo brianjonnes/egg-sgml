@@ -2,20 +2,6 @@ Options All -Indexes
 
 RewriteEngine On
 
-#Header set Strict-Transport-Security "max-age=300; includeSubDomains; preload"
-#<If "%{HTTPS} == 'off'">
-#RewriteCond %{HTTPS} off
-#RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-RewriteCond %{REQUEST_URI} !/1/templates.php
-RewriteCond %{REQUEST_URI} !/1/templates.php?.*
-#RewriteRule ^(.*)\.html$ $1 [R,END]
-#RewriteRule ^(.*)\.php$ $1 [R,END]
 RewriteRule ^([^.]*)$ /2/templates.php?t=%{REQUEST_URI} [END]
 
 RewriteBase /
-# RewriteOptions inherit
-#</If>
-
-# RewriteCond %{HTTP_HOST} ^example.com [NC]
-# RewriteRule ^(.*)$ https://www.example.com/$1 [L,R=301]

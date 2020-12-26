@@ -1,5 +1,5 @@
 <?php
-#    tgc_test.php - Egg SGML
+#    tgc_generic.php - Egg SGML
 #    Copyright (C) 2020 Brian Jonnes
 
 #    This library is free software; you can redistribute it and/or
@@ -21,6 +21,8 @@ class tgc_sgml_source {
 		return 0; }
 	function repeat( $q ) {
 		return 0; }
+	function consume_text( $q, $x ) {
+		$q->write(str_replace("<","&amp;lt;", str_replace( "&", "&amp;amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
 		if( $end ) {
 			if( $w->firstChild != null ) {
@@ -46,16 +48,19 @@ function strmerge( $a, $b, $c ) {
 	} return $b;
 }
 
-class tgc_test {
+class tgc_generic {
 	public $path, $self_href;
 	function __construct($path,$self_href) {
 		$this->path = $path;
 		$this->self_href = $self_href;
+		$this->clips = [ ];
 	}
 	function start( $q ) {
 		return 0; }
 	function repeat( $q ) {
 		return 0; }
+	function consume_text( $q, $x ) {
+		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
 		# local $m, $f
 		if( $w->nodeName == 'doctype' ) {
