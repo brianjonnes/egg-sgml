@@ -1,10 +1,12 @@
 ﻿<!doctype html><html><body>
 
-<h1>Egg-SGML (PHP)</h1>
+<h1><!--                -->
+Egg-SGML (PHP) </h1>
 
 Egg-SGML is little more than a depth-first tree search routine. Its usefulness is in separating code from data.
 
-<h2>Overview</h2>
+<h2><!--               -->
+Overview </h2>
 
 In the turmoil which followed the discovery that HTML was based on a standard which was not freely available, a few things seem to have gotten lost. <p/>
 
@@ -14,26 +16,16 @@ However, the requirement of compatibility meant that web-browsers continued, and
 
 DTD's have limited value. They are not useful to those who need to hand-craft an XML document. They would have been useful to parse an SGML document, to know which tags are self-closing, but XML solved this problem by making sure that the document tree is apparent without any further context. <p/>
 
-<h2>Example</h2>
+<h2><!--              -->
+Example </h2>
 
-A demonstration is necessary. Copy the sample subdirectory, and "1/templates.php" (into a "1" subdirectory), into an Apache compatible webserver with PHP enabled. <p/>
+A demonstration is necessary. If you have access to an Apache compatible webserver, with PHP (and mod_rewrite), setting up a clone of this repo as a virtual host should be all that's needed. <p/>
 
 Alternatively, these pages are hosted at <a href="https://egg-sgml.killtheworld.co.za/">egg-sgml.killtheworld.co.za</a>, but beware! The owner of the base domain is an opinionated pratt; it's a matter of necessity.
 
 <!--
 ....
 <p/>
-
-It is relatively easy to make a liberal XML parser (as exist in web-browsers), but the point of XML was to formalize the document tree; something which SGML had brought about but had been rather lax over. <p/>
-
-DTD's are not useful to those wanting to hand craft an XML document. Reference documents and informal communication are absolutely necessary.
-.
-
-tumultuous aftermath of the world discovering that HTML was based on a standard that was not freely available, and had not formalized the document tree though it had brought it about, a few things seem to have gotten lost. <p/>
-
-It must be noted that the clarity (and strictness) of the XML standard was not appreciated, and web-browsers continued to parse whatever they could see their way to making something out of. <p/>
-
-It must also be noted that DTD's are only useful for verification, and in practice verification only happens during loading. They are not useful for those wanting to hand-craft an XML document. With an SGML document they would have been useful to know when a tag is self-closing, but the XML standard quite sensibly enforces that all tags must be explicitly closed: so that the document tree is apparent without any further context. <p/> 
 
 XML Namespaces were created in order to solve the problem of the meaning of tags being contextual. However, tags must be contextual, even within a document.
 
