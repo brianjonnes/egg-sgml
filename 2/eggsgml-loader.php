@@ -27,6 +27,7 @@ function load_eggsgml_file( $doc ) {
 		if( $n == '' ) break;
 		$u->process_chunk( $n );
 	}
+	$u->process_eof();
 	return $m->w;
 }
 

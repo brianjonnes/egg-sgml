@@ -405,7 +405,7 @@ class eggsgml_parser {
 				} else if( $m[$c] == '&' ) {
 					$c += 1;
 					$this->T->canceltag();
-					$this->T->text( '<' . $this->s1 . '&' );
+					$this->T->text( '<' . $this->s1 . '/' );
 					$this->w = 1;
 				} else {
 					$this->T->canceltag();
@@ -1018,7 +1018,7 @@ class eggsgml_parser {
 					$this->w = 27;
 				}
 				break;
-			case 40:
+			case 40: // <! <!m <!--.--
 				if( $m[$c] == '-' ) {
 					$c += 1;
 					$this->w = 41;
@@ -1031,7 +1031,7 @@ class eggsgml_parser {
 					$c += 1;
 				}
 				break;
-			case 41:
+			case 41: // <!-
 				if( $m[$c] == '-' ) {
 					$c += 1;
 					$this->w = 42;
@@ -1045,7 +1045,7 @@ class eggsgml_parser {
 					$this->w = 40;
 				}
 				break;
-			case 42:
+			case 42: // <!--
 				if( $m[$c] == '-' ) {
 					$c += 1;
 					$this->w = 43;
@@ -1054,7 +1054,7 @@ class eggsgml_parser {
 					$c += 1;
 				}
 				break;
-			case 43:
+			case 43: // <!--- <!--.-
 				if( $m[$c] == '-' ) {
 					$c += 1;
 					$this->w = 40;
@@ -1065,6 +1065,81 @@ class eggsgml_parser {
 				}
 				break;
 			}
+		}
+	}
+	
+	function priv_process_eof_sub() {
+		switch( $this->w ) {
+			case 0:
+				break;
+			case 1:
+				$this->T->text( '&' );
+				break;
+			case 2:
+				$this->T->text( '&' . $this->s1 );
+				break;
+			case 3:
+				$this->T->text( '&#' );
+				break;
+			case 4: // &#0
+				$this->T->text( '&#' . $this->s1 );
+				break;
+			case 10: // <
+				$this->T->text( '<' );
+				break;
+			case 101: // </
+				$this->T->text( '</' );
+				break;
+			case 102: // </a
+				$this->T->text( '</' . $this->s1 );
+				break;
+			case 103: // </a.
+				$this->T->text( '</' . $this->s1 . $this->sR );
+				break;
+			case 11: // <a
+				$this->T->text( '<' . $this->s1 );
+				break;
+			case 111: // <a/
+				$this->T->text( '<' . $this->s1 . '/' );
+				break;
+			case 12: // <a.
+			case 13: // <a.n
+			case 131: // <a.n/
+			case 14: // <a.n.
+			case 15: // <a.n= <a.n.=
+			case 16: // <a.n=bv
+			case 17: // <a.n=bv&
+			case 18: // <a.n=bv&a
+			case 19: // <a.n=bv&#
+			case 20: // <a.n=bv&#3
+			case 21:
+			case 22: // <a.n="
+			case 23: // <a.n="bc&
+			case 24: // <a.n="bc&a
+			case 25: // <a.n="bc&#
+			case 26: // <a.n="bc&#3
+			case 27: // <a.n='
+			case 28: // <a.n='bc&
+			case 29: // <a.n='bc&a
+			case 30: // <a.n='bc&#
+			case 31: // <a.n='bc&#3
+				$this->T->canceltag();
+				$this->T->text( '<' . $this->s1 );
+				return 2;
+			case 40: // <! <!m <!--.--
+			case 41: // <!-
+			case 42: // <!--
+			case 43: // <!--- <!--.-
+				$this->T->text( '<!' . $this->s1 );
+				$this->T->complete_dt( '', $this->s2 );
+				break;
+			}
+	}
+	function process_eof() {
+		while( $this->priv_process_eof_sub( ) == 2 ) {
+			do {
+				$this->w = 0;
+			} while( $this->priv_process_chunk_sub( $this->sR ) == 2 );
 		}
 	}
 	function process_chunk($m) {
