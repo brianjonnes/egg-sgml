@@ -1,0 +1,1063 @@
+<?php
+#    eggsgml.php - Egg SGML
+#    Copyright (C) 2020 Brian Jonnes
+
+#    This library is free software; you can redistribute it and/or
+#    modify it under the terms of the GNU Lesser General Public
+#    License as published by the Free Software Foundation; either
+#    version 2.1 of the License, or (at your option) any later version.
+
+#    This library is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    Lesser General Public License for more details.
+
+#    You should have received a copy of the GNU Lesser General Public
+#    License along with this library; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+class eggsgml_tag_receiver {
+	function new_tag_formation( $j ) { }
+	function canceltag() {	}
+	function complete_tag( $self_closing ) {	}
+	function text( $j ) { }
+	function tagattr( $j, $d ) { }
+	function closing_tag( $j ) { }
+	function complete_dt( $dt, $comment ) { }
+};
+
+class diagnostic_tagreceiver {
+	function __construct() {
+		$this->tag = 00; }
+	function new_tag_formation( $j ) {
+		echo '&lt;new_tag name="' . $j . '"/>'; }
+	function canceltag() {
+		echo '&lt;cancel_tag/>'; }
+	function complete_tag( $self_closing ) {
+		echo '&lt;complete_tag'; if( $self_closing ) echo ' self_closing'; echo '/>'; }
+	function text( $j ) {
+		echo '&lt;text value="' . str_replace('<','&lt;',str_replace('"',"&amp;quot;", str_replace( "&", "&amp;amp;", $j ) ) ) . '"/>'; }
+	function tagattr( $j, $d ) {
+		echo '&lt;attribute name="' . str_replace('<','&lt;',str_replace('"',"&amp;quot;", str_replace( "&", "&amp;amp;", $j ) ) ) . '" value="' . str_replace('<','&lt;',str_replace('"',"&amp;quot;", str_replace( "&", "&amp;amp;", $d ) ) ) . '"/>'; }
+	function closing_tag( $j ) {
+		echo '&lt;closing_tag name="' . $j . '"/>'; }
+	function complete_dt( $dt, $comment ) {
+		echo '&lt;dt value="' . str_replace('<','&lt;',str_replace('"',"&amp;quot;", str_replace( "&", "&amp;amp;", $dt ) ) ) . '"/>';
+		echo '&lt;comment value="' . str_replace('<','&lt;',str_replace('"',"&amp;quot;", str_replace( "&", "&amp;amp;", $comment ) ) ) . '"/>';
+	}
+};
+
+class test_tagreceiver {
+	function __construct() {
+		$this->w = new DomDocument;
+		$this->c = $this->w; //$this->w->documentElement;
+		$this->attrs = 00; $this->tag = 00; }
+	function new_tag_formation( $j ) {
+		$this->tag = $j;
+		$this->attrs = [ ]; }
+	function canceltag() {	}
+	function complete_tag( $self_closing ) {
+		$x = $j = $d = 00;
+		echo '&lt;' . $this->tag;
+		foreach( $this->attrs as $j => $d ) {
+			echo ' ' . $j . '="' . str_replace('<','&lt;',str_replace('"',"&amp;quot;", str_replace( "&", "&amp;amp;", $d ) ) ) . '"';
+		}
+		if( $self_closing ) echo '/';
+		echo '>';
+		
+		$x = $this->w->createElement($this->tag);
+		$this->c->appendChild( $x );
+
+		foreach( $this->attrs as $j => $d ) {
+			$x->setAttribute( $j, $d ); }
+		if( ! $self_closing ) {
+			$this->c = $x; }
+	}
+	function text( $j ) {
+		$this->c->appendChild( $this->w->createTextNode( $j ) );
+		echo str_replace('<','&amp;lt;',str_replace('&','&amp;amp;',$j));
+	}
+	function tagattr( $j, $d ) {
+		$this->attrs[$j] = $d; }
+	function closing_tag( $j ) {
+		$x = $this->c;
+		while(1) {
+			if( ! $x ) {
+				$this->c->appendChild( $this->w->createTextNode( '</' . $j . '>' ) );
+				break; }
+			if( strtoupper( $x->nodeName ) == strtoupper( $j ) ) {
+				$this->c = $x->parentNode;
+				break; }
+			$x = $x->parentNode; }
+
+		echo '&lt;/' . $j . '>'; }
+}	
+
+class W3CDOM_tagreceiver {
+	function __construct() {
+		$this->w = new DomDocument;
+		$this->c = $this->w; //$this->w->documentElement;
+		$this->attrs = 00; $this->tag = 00; }
+	function new_tag_formation( $j ) {
+		$this->tag = $j;
+		$this->attrs = [ ]; }
+	function canceltag() {	}
+	function complete_tag( $self_closing ) {
+		$x = $j = $d = 00;
+		
+		$x = $this->w->createElement($this->tag);
+		$this->c->appendChild( $x );
+
+		foreach( $this->attrs as $j => $d ) {
+			$x->setAttribute( $j, $d ); }
+		if( ! $self_closing ) {
+			$this->c = $x; }
+	}
+	function text( $j ) {
+		$this->c->appendChild( $this->w->createTextNode( $j ) );
+	}
+	function tagattr( $j, $d ) {
+		$this->attrs[$j] = $d; }
+	function closing_tag( $j ) {
+		$x = $this->c;
+		while(1) {
+			if( ! $x ) {
+				$this->c->appendChild( $this->w->createTextNode( '</' . $j . '>' ) );
+				break; }
+			if( strtoupper( $x->nodeName ) == strtoupper( $j ) ) {
+				$this->c = $x->parentNode;
+				break; }
+			$x = $x->parentNode; }
+		}
+	function complete_dt( $dt, $comment ) {
+		if( $dt != '' ) {
+			$x = $this->w->createElement('doctype');
+			$x->setAttribute( 'raw', $dt );
+			$this->c->appendChild( $x );
+		}
+	}
+}	
+
+class eggsgml_parser {
+	function __construct($T) {
+		$this->sR = ''; $this->s1 = $this->s2 = $this->s3 = $this->s4 = '';
+		$this->w = 0;
+		$this->T = $T;
+	}
+	function priv_process_chunk_sub( $m ) {
+		$c = 0; $a = 00;
+		while( $c < strlen($m) ) {
+//echo( $this->w . ' a' );
+			switch( $this->w ) {
+			case 0:
+				$a = strpos( $m, '<', $c );
+				if( ! ( $a === false ) ) {
+					if( $a > $c ) $this->T->text( substr( $m, $c, $a - $c ) );
+					$c = $a + 1;
+					$this->w = 10;
+					break; }
+				$a = strpos( $m, '&', $c );
+				if( ! ( $a === false ) ) {
+					if( $a > $c ) $this->T->text( substr( $m, 0, $a - $c ) );
+					$c = $a + 1;
+					$this->w = 1;
+					break; }
+				$this->T->text( substr( $m, $c ) );
+				return 1;
+			case 1:
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
+					$this->s1 = $m[$c];
+					$c += 1;
+					$this->w = 2;
+				} else if( $m[$c] == '#' ) {
+					$c += 1;
+					$this->w = 3;
+				} else if( $m[$c] == '<' ) {
+					$this->T->text( '&' );
+					$c += 1;
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$this->T->text( '&' );
+					$c += 1;
+				} else {
+					$this->T->text( '&' . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 2:
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ||
+						$m[$c] >= '0' && $m[$c] <= '9' || $m[$c] == '.' || $m[$c] == ':' || $m[$c] == '-' ) {
+					$this->s1 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ';' ) {
+					$this->T->htmlent( $this->s1 );
+					$c += 1;
+					$this->w = 0;
+				} else if( $m[$c] == '<' ) {
+					$this->T->text( '&' . $this->s1 );
+					$c += 1;
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$this->T->text( '&' . $this->s1 );
+					$c += 1;
+					$this->w = 1;
+				} else {
+					$this->T->text( '&' . $this->s1 . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 3:
+				if( $m[$c] >= '0' && $m[$c] <= '9' ) {
+					$this->s1 = $m[$c];
+					$c += 1;
+					$this->w = 4;
+				} else if( $m[$c] == '<' ) {
+					$this->T->text( '&#' );
+					$c += 1;
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$this->T->text( '&#' );
+					$c += 1;
+					$this->w = 1;
+				} else {
+					$this->T->text( '&#' . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 4: // &#0
+				if( $m[$c] >= '0' && $m[$c] <= '9' ) {
+					$this->s1 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ';' ) {
+					$this->T->text( mb_chr( $this->s1 ) );
+					$c += 1;
+					$this->w = 0;
+				} else if( $m[$c] == '<' ) {
+					$this->T->text( '&#' . $this->s1 );
+					$c += 1;
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$this->T->text( '&#' . $this->s1 );
+					$c += 1;
+					$this->w = 1;
+				} else {
+					$this->T->text( '&#' . $this->s1 . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 10: // <
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
+					$this->s1 = $m[$c];
+					$c += 1;
+					$this->w = 11;
+				} else if( $m[$c] == '/' ) {
+					$c += 1;
+					$this->w = 101;
+				} else if( $m[$c] == '!' ) {
+					$c += 1;
+					$this->s1 = $this->s2 = '';
+					$this->w = 40;
+				} else if( $m[$c] == '<' ) {
+					$this->T->text( '<' );
+					$c += 1;
+				} else if( $m[$c] == '&' ) {
+					$this->T->text( '&' );
+					$c += 1;
+					$this->w = 1;
+				} else {
+					$this->T->text( '<' . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 101: // </
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
+					$this->s1 = $m[$c];
+					$c += 1;
+					$this->w = 102;
+				} else if( $m[$c] == '<' ) {
+					$c += 1;
+					$this->T->text( '</' );
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$c += 1;
+					$this->T->text( '</' );
+					$this->w = 1;
+				} else {
+					$this->T->text( '</' . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 102: // </a
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ||
+						$m[$c] >= '0' && $m[$c] <= '9' || $m[$c] == '.' || $m[$c] == ':' || $m[$c] == '-' ) {
+					$this->s1 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR = $m[$c];
+					$c += 1;
+					$this->w = 103;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->closing_tag( $this->s1 );
+					$this->w = 0;
+				} else if( $m[$c] == '<' ) {
+					$c += 1;
+					$this->T->text( '</' . $this->s1 );
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$c += 1;
+					$this->T->text( '</' . $this->s1 );
+					$this->w = 1;
+				} else {
+					$this->T->text( '</' . $this->s1 . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 103: // </a.
+				if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->closing_tag( $this->s1 );
+					$this->w = 0;
+				} else if( $m[$c] == '<' ) {
+					$c += 1;
+					$this->T->text( '</' . $this->s1 . $this->sR );
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$c += 1;
+					$this->T->text( '</' . $this->s1 . $this->sR );
+					$this->w = 1;
+				} else {
+					$this->T->text( '</' . $this->s1 . $this->sR . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 11: // <a
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ||
+						$m[$c] >= '0' && $m[$c] <= '9' || $m[$c] == '.' || $m[$c] == ':' || $m[$c] == '-' ) {
+					$this->s1 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR = $m[$c];
+					$c += 1;
+					$this->T->new_tag_formation( $this->s1 );
+					$this->w = 12;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->new_tag_formation( $this->s1 );
+					$this->T->complete_tag(0);
+					$this->w = 0;
+				} else if( $m[$c] == '/' ) {
+					$c += 1;
+					$this->T->new_tag_formation( $this->s1 );
+					$this->sR = '';
+					$this->w = 111;
+				} else if( $m[$c] == '<' ) {
+					$this->T->text( '<' . $this->s1 );
+					$c += 1;
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$this->T->text( '<' . $this->s1 );
+					$c += 1;
+					$this->w = 1;
+				} else {
+					$this->T->text( '<' . $this->s1 . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 111: // <a/
+				if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->complete_tag( 1 );
+					$this->w = 0;
+				} else if( $m[$c] == '<' ) {
+					$c += 1;
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 . '/' );
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$c += 1;
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 . '&' );
+					$this->w = 1;
+				} else {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 . '/' . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 12: // <a.
+				if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
+					$this->sR .= $m[$c];
+					$this->s2 = $m[$c];
+					$c += 1;
+					$this->w = 13;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->complete_tag(0);
+					$this->w = 0;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 131;
+				} else {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				}
+				break;
+			case 13: // <a.n
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ||
+						$m[$c] >= '0' && $m[$c] <= '9' || $m[$c] == '.' || $m[$c] == ':' || $m[$c] == '-' ) {
+					$this->sR .= $m[$c];
+					$this->s2 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 14;
+				} else if( $m[$c] == '=' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 15;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->tagattr( $this->s2, '' );
+					$this->T->complete_tag( 0 );
+					$this->w = 0;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, '' );
+					$this->w = 131;
+				} else {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				}
+				break;
+			case 131: // <a.n/
+				if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->complete_tag( 1 );
+					$this->w = 0;
+				} else {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				}
+				break;
+			case 14: // <a.n.
+				if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == '=' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 15;
+				} else if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
+					$this->sR .= $m[$c];
+					$this->T->tagattr( $this->s2, '' );
+					$this->s1 = $m[$c];
+					$c += 1;
+					$this->w = 13;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->tagattr( $this->s2, '' );
+					$this->T->complete_tag( 0 );
+					$this->w = 0;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, '' );
+					$this->w = 131;
+				} else {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				}
+				break;
+			case 15: // <a.n= <a.n.=
+				if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == '"' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 = '';
+					$this->w = 22;
+				} else if( $m[$c] == '\'' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 = '';
+					$this->w = 27;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 = '';
+					$this->w = 17;
+				} else if( $m[$c] == '<' ) {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 = '';
+					$this->w = 21;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->tagattr( $this->s2, '' );
+					$this->T->complete_tag( 0 );
+					$this->w = 0;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 = $m[$c];
+					$c += 1;
+					$this->w = 16;
+				}
+				break;
+			case 16: // <a.n=bv
+				if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$this->T->tagattr( $this->s2, $this->s3 );
+					$c += 1;
+					$this->w = 12;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 17;
+				} else if( $m[$c] == '<' ) {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 21;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 );
+					$this->T->complete_tag( 0 );
+					$this->w = 0;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= $m[$c];
+					$c += 1;
+				}
+				break;
+			case 17: // <a.n=bv&
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
+					$this->sR .= $m[$c];
+					$this->s4 = $m[$c];
+					$c += 1;
+					$this->w = 18;
+				} else if( $m[$c] == '#' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 19;
+				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&' );
+					$this->w = 12;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&';
+					$c += 1;
+				} else if( $m[$c] == '<' ) {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&';
+					$this->w = 21;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&' );
+					$this->T->complete_tag( 0 );
+					$this->w = 0;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $m[$c];
+					$c += 1;
+					$this->w = 16;
+				}
+				break;
+			case 18: // <a.n=bv&a
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ||
+						$m[$c] >= '0' && $m[$c] <= '9' || $m[$c] == '.' || $m[$c] == ':' || $m[$c] == '-' ) {
+					$this->sR .= $m[$c];
+					$this->s4 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ';' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= $this->T->attrent( $this->s4 );
+					$this->w = 16;
+				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&' . $this->s4 );
+					$this->w = 12;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $this->s4;
+					$c += 1;
+					$this->w = 17;
+				} else if( $m[$c] == '<' ) {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&' . $this->s4;
+					$this->w = 21;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&' . $this->s4 );
+					$this->T->complete_tag( 0 );
+					$this->w = 0;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $this->s4 . $m[$c];
+					$c += 1;
+					$this->w = 16;
+				}
+				break;
+			case 19: // <a.n=bv&#
+				if( $m[$c] >= '0' && $m[$c] <= '9' ) {
+					$this->sR .= $m[$c];
+					$this->s4 = $m[$c];
+					$c += 1;
+					$this->w = 20;
+				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&#' );
+					$this->w = 12;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&#';
+					$this->w = 17;
+				} else if( $m[$c] == '<' ) {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&#';
+					$this->w = 21;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&#' );
+					$this->T->complete_tag( 0 );
+					$this->w = 0;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&#' . $m[$c];
+					$c += 1;
+					$this->w = 16;
+				}
+				break;
+			case 20: // <a.n=bv&#3
+				if( $m[$c] >= '0' && $m[$c] <= '9' ) {
+					$this->sR .= $m[$c];
+					$this->s4 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ';' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= mb_ord( $this->s4 );
+					$this->w = 16;
+				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3, '&#' . $this->s4 );
+					$this->w = 12;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&#' . $this->s4;
+					$this->w = 17;
+				} else if( $m[$c] == '<' ) {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&#' . $this->s4;
+					$c += 1;
+					$this->w = 21;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&#' . $this->s4 );
+					$this->T->complete_tag( 0 );
+					$this->w = 0;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&#' . $this->s4 . $m[$c];
+					$c += 1;
+					$this->w = 16;
+				}
+				break;
+			case 21:
+				if( $m[$c] == '>' ) {
+					$this->T->complete_tag( 1 );
+					$c += 1;
+					$this->w = 0;
+				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '/' );
+					$this->w = 12;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '/';
+					$this->w = 17;
+				} else if( $m[$c] == '<' ) {
+					$this->T->canceltag();
+					$this->T->text( '<' . $this->s1 );
+					$this->sR .= substr( $m, $c );
+					return 2;
+				} else if( $m[$c] == '/' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '/';
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '/' . $m[$c];
+					$c += 1;
+					$this->w = 16;
+				}
+				break;
+			case 22: // <a.n="
+				if( $m[$c] == '"' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 );
+					$this->w = 12;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 23;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= $m[$c];
+					$c += 1;
+				}
+				break;
+			case 23: // <a.n="bc&
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
+					$this->sR .= $m[$c];
+					$this->s4 = $m[$c];
+					$c += 1;
+					$this->w = 24;
+				} else if( $m[$c] == '#' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 25;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&';
+					$c += 1;
+				} else if( $m[$c] == '"' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&' );
+					$this->w = 12;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $m[$c];
+					$c += 1;
+					$this->w = 22;
+				}
+				break;
+			case 24: // <a.n="bc&a
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ||
+						$m[$c] >= '0' && $m[$c] <= '9' || $m[$c] == '.' || $m[$c] == ':' || $m[$c] == '-' ) {
+					$this->sR .= $m[$c];
+					$this->s4 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ';' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= $this->T->attrent( $this->s4 );
+					$this->w = 22;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $this->s4;
+					$c += 1;
+					$this->w = 23;
+				} else if( $m[$c] == '"' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&' . $this->s4 );
+					$this->w = 12;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $this->s4 . $m[$c];
+					$c += 1;
+					$this->w = 22;
+				}
+				break;
+			case 25: // <a.n="bc&#
+				if( $m[$c] >= '0' && $m[$c] <= '9' ) {
+					$this->sR .= $m[$c];
+					$this->s4 = $m[$c];
+					$c += 1;
+					$this->w = 26;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&#';
+					$this->w = 23;
+				} else if( $m[$c] == '"' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3, '&#' );
+					$this->w = 12;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&#' . $m[$c];
+					$c += 1;
+					$this->w = 22;
+				}
+				break;
+			case 26: // <a.n="bc&#3
+				if( $m[$c] >= '0' && $m[$c] <= '9' ) {
+					$this->sR .= $m[$c];
+					$this->s4 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ';' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= mb_ord( $this->s4 );
+					$this->w = 22;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&#' . $this->s4;
+					$this->w = 23;
+				} else if( $m[$c] == '"' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3, '&#' . $this->s4 );
+					$this->w = 12;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&#' . $this->s4 . $m[$c];
+					$c += 1;
+					$this->w = 22;
+				}
+				break;
+			case 27: // <a.n='
+				if( $m[$c] == '\'' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 );
+					$this->w = 12;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 28;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= $m[$c];
+					$c += 1;
+				}
+				break;
+			case 28: // <a.n='bc&
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
+					$this->sR .= $m[$c];
+					$this->s4 = $m[$c];
+					$c += 1;
+					$this->w = 29;
+				} else if( $m[$c] == '#' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->w = 30;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&';
+					$c += 1;
+				} else if( $m[$c] == '\'' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&' );
+					$this->w = 12;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $m[$c];
+					$c += 1;
+					$this->w = 27;
+				}
+				break;
+			case 29: // <a.n='bc&a
+				if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ||
+						$m[$c] >= '0' && $m[$c] <= '9' || $m[$c] == '.' || $m[$c] == ':' || $m[$c] == '-' ) {
+					$this->sR .= $m[$c];
+					$this->s4 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ';' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= $this->T->attrent( $this->s4 );
+					$this->w = 27;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $this->s4;
+					$c += 1;
+					$this->w = 28;
+				} else if( $m[$c] == '\'' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 . '&' . $this->s4 );
+					$this->w = 12;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&' . $this->s4 . $m[$c];
+					$c += 1;
+					$this->w = 27;
+				}
+				break;
+			case 30: // <a.n='bc&#
+				if( $m[$c] >= '0' && $m[$c] <= '9' ) {
+					$this->sR .= $m[$c];
+					$this->s4 = $m[$c];
+					$c += 1;
+					$this->w = 31;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&#';
+					$this->w = 28;
+				} else if( $m[$c] == '\'' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3, '&#' );
+					$this->w = 12;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&#' . $m[$c];
+					$c += 1;
+					$this->w = 27;
+				}
+				break;
+			case 31: // <a.n='bc&#3
+				if( $m[$c] >= '0' && $m[$c] <= '9' ) {
+					$this->sR .= $m[$c];
+					$this->s4 .= $m[$c];
+					$c += 1;
+				} else if( $m[$c] == ';' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= mb_ord( $this->s4 );
+					$this->w = 27;
+				} else if( $m[$c] == '&' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->s3 .= '&#' . $this->s4;
+					$this->w = 28;
+				} else if( $m[$c] == '\'' ) {
+					$this->sR .= $m[$c];
+					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3, '&#' . $this->s4 );
+					$this->w = 12;
+				} else {
+					$this->sR .= $m[$c];
+					$this->s3 .= '&#' . $this->s4 . $m[$c];
+					$c += 1;
+					$this->w = 27;
+				}
+				break;
+			case 40:
+				if( $m[$c] == '-' ) {
+					$c += 1;
+					$this->w = 41;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->complete_dt( $this->s1, $this->s2 );
+					$this->w = 0;
+				} else {
+					$this->s1 .= $m[$c];
+					$c += 1;
+				}
+				break;
+			case 41:
+				if( $m[$c] == '-' ) {
+					$c += 1;
+					$this->w = 42;
+				} else if( $m[$c] == '>' ) {
+					$c += 1;
+					$this->T->complete_dt( $this->s1 . '-', $this->s2 );
+					$this->w = 0;
+				} else {
+					$this->s1 .= '-' . $m[$c];
+					$c += 1;
+					$this->w = 40;
+				}
+				break;
+			case 42:
+				if( $m[$c] == '-' ) {
+					$c += 1;
+					$this->w = 43;
+				} else {
+					$this->s2 .= $m[$c];
+					$c += 1;
+				}
+				break;
+			case 43:
+				if( $m[$c] == '-' ) {
+					$c += 1;
+					$this->w = 40;
+				} else {
+					$this->s2 .= '-' . $m[$c];
+					$c += 1;
+					$this->w = 42;
+				}
+				break;
+			}
+		}
+	}
+	function process_chunk($m) {
+		if( $this->priv_process_chunk_sub( $m ) == 2 ) {
+			do {
+				$this->w = 0;
+			} while( $this->priv_process_chunk_sub( $this->sR ) == 2 );
+		}
+	}
+}
+
+?>

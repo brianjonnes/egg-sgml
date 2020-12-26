@@ -9,9 +9,9 @@ RewriteEngine On
 
 RewriteCond %{REQUEST_URI} !/1/templates.php
 RewriteCond %{REQUEST_URI} !/1/templates.php?.*
-RewriteRule ^(.*)\.html$ $1 [R,END]
-RewriteRule ^(.*)\.php$ $1 [R,END]
-RewriteRule ^([^.]*)$ /1/templates.php?t=%{REQUEST_URI} [END]
+#RewriteRule ^(.*)\.html$ $1 [R,END]
+#RewriteRule ^(.*)\.php$ $1 [R,END]
+RewriteRule ^([^.]*)$ /2/templates.php?t=%{REQUEST_URI} [END]
 
 RewriteBase /
 # RewriteOptions inherit
