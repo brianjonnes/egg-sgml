@@ -152,13 +152,65 @@ class W3CDOM_tagreceiver {
 class eggsgml_parser {
 	function __construct($T) {
 		$this->sR = ''; $this->s1 = $this->s2 = $this->s3 = $this->s4 = '';
-		$this->w = 0;
+		$this->w = 1000;
 		$this->T = $T;
 	}
 	function priv_process_chunk_sub( $m ) {
 		$c = 0; $a = $b = 00;
 		while( $c < strlen($m) ) {
 			switch( $this->w ) {
+			case 1000:
+				if( ord( $m[$c] ) == 239 ) {
+					$c += 1;
+					$this->w = 1001;
+				} else if( $m[$c] == '<' ) {
+					$c += 1;
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$c += 1;
+					$this->w = 1;
+				} else {
+					$this->T->text( $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 1001:
+				if( ord( $m[$c] ) == 187 ) {
+					$c += 1;
+					$this->w = 1002;
+				} else if( $m[$c] == '<' ) {
+					$c += 1;
+					$this->T->text( chr(239) );
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$c += 1;
+					$this->T->text( chr(239) );
+					$this->w = 1;
+				} else {
+					$this->T->text( chr(239) . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
+			case 1002:
+				if( ord( $m[$c] ) == 191 ) {
+					$c += 1;
+					$this->w = 0;
+				} else if( $m[$c] == '<' ) {
+					$c += 1;
+					$this->T->text( chr(239) . chr(187) );
+					$this->w = 10;
+				} else if( $m[$c] == '&' ) {
+					$c += 1;
+					$this->T->text( chr(239) . chr(187) );
+					$this->w = 1;
+				} else {
+					$this->T->text( chr(239) . chr(187) . $m[$c] );
+					$c += 1;
+					$this->w = 0;
+				}
+				break;
 			case 0:
 				$a = strpos( $m, '<', $c );
 				if( ! ( $a === false ) ) {
@@ -747,10 +799,11 @@ class eggsgml_parser {
 					$this->w = 16;
 				}
 				break;
-			case 21:
+			case 21: // <a.n=bv/
 				if( $m[$c] == '>' ) {
-					$this->T->complete_tag( 1 );
 					$c += 1;
+					$this->T->tagattr( $this->s2, $this->s3 );
+					$this->T->complete_tag( 1 );
 					$this->w = 0;
 				} else if( $m[$c] == ' ' || $m[$c] == '\t' || $m[$c] == '\n' || $m[$c] == '\r' ) {
 					$this->sR .= $m[$c];
