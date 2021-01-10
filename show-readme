@@ -1,0 +1,7 @@
+<record id="title">Egg-SGML: README</record><record id="content">
+
+<h1>README</h1>
+<div/><hr/>
+<include_html path="README.html"/>
+
+</record><include path="header_footer.include"/>

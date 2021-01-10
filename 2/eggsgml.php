@@ -141,6 +141,14 @@ class W3CDOM_tagreceiver {
 			$this->c->appendChild( $x );
 		}
 	}
+	function attrent( $m ) {
+		$u = 00;
+		if( array_key_exists( $m, $this->htmlent ) ) {
+			$u = mb_chr( $this->htmlent[$m] );
+		} else {
+			$u = '&' . $m . ';'; }
+		return $u;
+	}
 	function htmlent( $m ) {
 		if( array_key_exists( $m, $this->htmlent ) ) {
 			$u = mb_chr( $this->htmlent[$m] );

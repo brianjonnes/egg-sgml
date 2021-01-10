@@ -23,6 +23,29 @@ A demonstration is necessary. If you have access to an Apache compatible webserv
 
 Alternatively, these pages are hosted at <a href="https://egg-sgml.killtheworld.co.za/">egg-sgml.killtheworld.co.za</a>, but beware! The owner of the base domain is an opinionated pratt; it's a matter of necessity.
 
+<h2><!--            -->
+Egg-SGML parser </h2>
+
+A web browser's parser is generally built to make sense of what it must parse, as producing an error message to a web user is totally nonsensical. It must also accept that some very old webpages still exist, do not have maintainers, and thus must continue to be parsed correctly even if standards have changed. <p/>
+
+As HTML was developed before XML was conceptualized (specifically the self-closing /> indicator), the tags &lt;hr>, &lt;br>, &lt;input>, etc., are assumed as self-closing.  Egg-SGML does not include any legacy assumptions and all tags must be explicitly self-closing: &lt;hr/>, &lt;br/>, &lt;input/>, etc.<p/>
+
+Furthermore, web-browsers are often developed to compensate for sloppy coding. Thus we find (in Google Chrome at least) that &lt;div/> is not interpreted as &lt;div>&lt;/div>. As we are looking for consistency of input, the output module specifically replaces &lt;div/> with &lt;div>&lt;/div>. <p/>
+
+In contrast to XML, attribute values may be single or double-quoted, or unquoted. An unquoted attribute that ends with / must be succeeded by whitespace as the / will otherwise attach to >. <p/>
+
+Unclosed tags are automatically closed when a tag that precedes it (encloses it) is closed. Thus when tags are closed in the incorrect order, there will be unmatched closing tags. These will be sent to output as literal values. Thus &lt;b>this &lt;i>sample&lt;/b>&lt;/i> will have the result "<b>this <i>sample</i></b>&lt;/i>". <p/>
+
+Files must be UTF-8, and the zwnbsp byte order mark will be removed if found.
+
+<h2><!--           -->
+Security considerations</h2>
+
+Note that the included root tag consumer can load any file on the system, which the webserver process has access to. Additionally, the way .htaccess is setup here, any file with no extension, under your webroot, may be requested with templates.php, and will be processed as an Egg-SGML file. <p/>
+
+If you are going to include HTML from other sources, you must load a tag consumer that handles everything: tags must not devolve up the tag stack where tags such as 'include' will be allowed.
+
+
 <!--
 ....
 <p/>
