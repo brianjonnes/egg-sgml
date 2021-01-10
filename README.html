@@ -26,17 +26,15 @@ Alternatively, these pages are hosted at <a href="https://egg-sgml.killtheworld.
 <h2><!--            -->
 Egg-SGML parser </h2>
 
-A web browser's parser is generally built to make sense of what it must parse, as producing an error message to a web user is totally nonsensical. It must also accept that some very old webpages still exist, do not have maintainers, and thus must continue to be parsed correctly even if standards have changed. <p/>
+As mentioned, a web browser doesn't complain when it receives a file which is non-conforming. Additionally, the developers of web browsers know very well that many webpages exist which are very old and do not have maintainers to upgrade them; thus pages conforming to old standards must continue to be parsed correctly. For this reason a web-browser must maintain a list of tags which formerly have been self-closing: hr, br, input, etc. <p/>
 
-As HTML was developed before XML was conceptualized (specifically the self-closing /> indicator), the tags &lt;hr>, &lt;br>, &lt;input>, etc., are assumed as self-closing.  Egg-SGML does not include any legacy assumptions and all tags must be explicitly self-closing: &lt;hr/>, &lt;br/>, &lt;input/>, etc.<p/>
+<b>Egg-SGML does not include any legacy assumptions.</b> Always indicate a tag is self-closing: &lt;hr/>, &lt;br/>, etc. <p/>
 
-Furthermore, web-browsers are often developed to compensate for sloppy coding. Thus we find (in Google Chrome at least) that &lt;div/> is not interpreted as &lt;div>&lt;/div>. As we are looking for consistency of input, the output module specifically replaces &lt;div/> with &lt;div>&lt;/div>. <p/>
+In contrast to XML, and more in line with a web browser's idea of HTML, attribute values may be single-quoted, double-quoted, or unquoted. Note that an unquoted attribute that ends with / must be succeeded by whitespace, or / will attach to >. For example, &lt;a href=/> is interpreted as &lt;a href="">&lt;/a>.<p/>
 
-In contrast to XML, attribute values may be single or double-quoted, or unquoted. An unquoted attribute that ends with / must be succeeded by whitespace as the / will otherwise attach to >. <p/>
+In terms of document structure, unclosed tags are automatically closed when a tag that precedes it (encloses it) is closed. For example, "&lt;b>this &lt;i>sample&lt;/b>&lt;/i>" will be interpreted as "&lt;b>this &lt;i>sample<u>&lt;/i></u>&lt;/b>&amp;lt;/i>" and appear as "<b>this <i>sample</i></b>&lt;/i>": the unmatched closing tags are sent to the output as literal values. <p/>
 
-Unclosed tags are automatically closed when a tag that precedes it (encloses it) is closed. Thus when tags are closed in the incorrect order, there will be unmatched closing tags. These will be sent to output as literal values. Thus &lt;b>this &lt;i>sample&lt;/b>&lt;/i> will have the result "<b>this <i>sample</i></b>&lt;/i>". <p/>
-
-Files must be UTF-8, and the zwnbsp byte order mark will be removed if found.
+Finally, files must be UTF-8, and the zwnbsp byte order mark will be removed if found.
 
 <h2><!--           -->
 Security considerations</h2>
