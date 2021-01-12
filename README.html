@@ -62,7 +62,7 @@ interpreted as &lt;a href="">&lt;/a>.<p/>
 In terms of document structure, unclosed tags are automatically closed when 
 a tag that precedes it (encloses it) is closed. For example, 
 "&lt;b>this &lt;i>sample&lt;/b>&lt;/i>" will be interpreted as 
-"&lt;b>this &lt;i>sample<u>&lt;/i></u>&lt;/b>&amp;lt;/i>" and appear as 
+"&lt;b>this &lt;i>sample<u>&lt;/i>&lt;/b></u>&amp;lt;/i>" and appear as 
 "<b>this <i>sample</i></b>&lt;/i>": the unmatched closing tags are sent to 
 the output as literal values. <p/>
 
