@@ -1,13 +1,18 @@
 <record id="title">Egg-SGML Test</record><record id="content">
+<div class="w3-container w3-theme-l5">
 
-This is an example website for Egg-SGML, which continues from the <a href="/show-readme">README</a> file of the project. <p/>
+<p>This is an example website for Egg-SGML, which continues from the <a href="/show-readme">README</a> file of the project. </p>
 
-Something potentially unique about this site is that it is almost completely transparent: all source documents are displayed. <p/>
+<p>Something potentially unique about this site is that it is almost completely transparent: all source documents are displayed. </p>
 
-We start with this home page:<p/>
-<div class="source"><div class="tweakA"/><showsource path="home" highlight="record play include showsource"/><div class="tweakB"/></div>
+<p>We start with this home page:</p>
 
-<p/><p/>
-You will no doubt be wondering about the tags <u>showsource</u>, <u>record</u>, and <u>include</u>. These will be described after contrasting this page with another: <a href="/eggs-play-nation">the explanation</a>.
+</div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5">
+<showsource path="home" highlight="record play include showsource"/></div><div class="tweakB"/></div>
+<div class="w3-container w3-theme-l5">
 
+<p>You will no doubt be wondering about the tags <u>showsource</u>, <u>record</u>, and <u>include</u>. These will be described after contrasting this page with another: <a href="/eggs-play-nation">the explanation</a>.</p>
+
+</div>
 </record><include path="header_footer.include"/>

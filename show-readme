@@ -1,18 +1,20 @@
 <record id="title">Egg-SGML: README</record><record id="meta">
 <style type="text/css">
-.local h2 { font-size: 1em; margin: 0.5em 0; }
-.local p { margin: 0.5em 0; }
+/*.local h2 { font-size: 1em; margin: 0.5em 0; }
+.local p { margin: 0.5em 0; }*/
 </style>
 </record><record id="content"><div class="local">
+<div class="w3-container w3-theme-l5">
 
-README file from Egg-SGML project.
+<p>README file from Egg-SGML project.</p>
 
 <hr/>
 <module path="../readme.php"><include_html path="README.html"/></module>
 <hr/>
 
-<p/>Source document for this page: <p/>
-<div class="source"><div class="tweakA"/><showsource path="show-readme" highlight="record play include showsource module include_html"/><div class="tweakB"/></div>
+<p>Source document for this page: </p>
+</div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="show-readme" highlight="record play include showsource module include_html"/></div><div class="tweakB"/></div>
 
 
 </div></record><include path="header_footer.include"/>

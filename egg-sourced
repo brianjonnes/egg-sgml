@@ -1,17 +1,24 @@
 <tag><record id="title">Egg-SGML: Source Code</record><record id="content">
-Here we reach the goal of full transparency, starting with nav.include, included by header_footer.include, which was displayed on the explanation page: <p/>
+<div class="w3-container w3-theme-l5">
+<p>Here we reach the goal of full transparency, starting with nav.include, included by header_footer.include, which was displayed on the explanation page: </p>
+</div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="nav.include" highlight="record play include showsource a.site"/></div><div class="tweakB"/></div>
+<div class="w3-container w3-theme-l5">
 
-<div class="source"><div class="tweakA"/><showsource path="nav.include" highlight="record play include showsource a.site"/><div class="tweakB"/></div>
+<p>As may be guessed, <u>a.site</u> allows us to highlight the current page in the navigation.</p>
 
-<p/><p/>As may be guessed, <u>a.site</u> allows us to highlight the current page in the navigation.
-<p/><p/>
-We also show you the .htaccess file in use:<p/>
-<div class="source"><div class="tweakA"/><showphp path=".htaccess"/><div class="tweakB"/></div>
+<p>We also show you the .htaccess file in use:</p>
+</div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showphp path=".htaccess"/></div><div class="tweakB"/></div>
+<div class="w3-container w3-theme-l5">
 
-<p/><p/> And finally, the source document of this page (egg-sourced):<p/>
+<p> And finally, the source document of this page (egg-sourced):</p>
 
-<div class="source"><div class="tweakA"/><showsource path="egg-sourced" highlight="record play include showsource showphp"/><div class="tweakB"/></div>
+</div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="egg-sourced" highlight="record play include showsource showphp"/></div><div class="tweakB"/></div>
+<div class="w3-container w3-theme-l5">
 
-<p/><p/>Cheers!
+<p>Cheers!</p>
 
+</div>
 </record><include path="header_footer.include"/></tag>
