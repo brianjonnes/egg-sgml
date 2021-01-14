@@ -17,6 +17,11 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class tgc_sgml_source {
+	public $NF;
+	public $hlight;
+	function __construct($hlight) {
+		$this->hlight = explode(' ', $hlight);
+	}
 	function start( $q ) {
 		return 0; }
 	function repeat( $q ) {
@@ -24,11 +29,18 @@ class tgc_sgml_source {
 	function consume_text( $q, $x ) {
 		$q->write(str_replace("<","&amp;lt;", str_replace( "&", "&amp;amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
+		$a = false;
 		if( $end ) {
 			if( $w->firstChild != null ) {
-				$q->write('<b>&lt;/<u>' . $w->nodeName . '</u>></b>'); }
+				if( ! ( array_search($w->nodeName,$this->hlight) === false ) )  {
+					$q->write('<b>'); $a = true; }
+				$q->write('&lt;/<u>' . $w->nodeName . '</u>>');
+				if( $a ) $q->write('</b>'); 
+			}
 			return 1; }
-		$q->write('<b>&lt;<u>' . $w->nodeName . '</u>');
+		if( ! ( array_search($w->nodeName,$this->hlight) === false ) )  {
+			$q->write('<b>'); $a = true; }
+		$q->write('&lt;<u>' . $w->nodeName . '</u>');
 		for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
 			$q->write(' ' . $w->attributes->item($m)->name);
 			if( $w->attributes->item($m)->value != null ) {
@@ -36,7 +48,8 @@ class tgc_sgml_source {
 		}
 		if( $w->firstChild == null ) {
 			$q->write('/'); }
-		$q->write('></b>');
+		$q->write('>');
+		if( $a ) $q->write('</b>'); 
 		return 2; }
 }
 
@@ -132,7 +145,7 @@ class tgc_generic {
 		if( $w->nodeName == 'showsource' ) {
 			if ($end) return 1;
 			$m = load_eggsgml_file( $this->path . "/" . $w->getAttribute('path') );
-			$this->NF = newframe(new tgc_sgml_source,$q,$m);
+			$this->NF = newframe(new tgc_sgml_source($w->getAttribute('highlight')),$q,$m);
 			return 3; }
 		if( $w->nodeName == 'showphp' ) {
 			if ($end) return 1;
@@ -167,7 +180,7 @@ class tgc_generic {
 			}
 			$q->write('>');
 			if( $w->firstChild != null ) {
-				$q->write( $w->firstChild->value ); }
+				$q->write( $w->firstChild->data ); }
 			$q->write('</script>');
 			return 1; }
 		if( $end ) {

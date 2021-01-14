@@ -1191,8 +1191,7 @@ class eggsgml_parser {
 			case 41: // <!-
 			case 42: // <!--
 			case 43: // <!--- <!--.-
-				$this->T->text( '<!' . $this->s1 );
-				$this->T->complete_dt( '', $this->s2 );
+				$this->T->text( '<!' . $this->s1 . '--' . $this->s2 );
 				break;
 			}
 	}

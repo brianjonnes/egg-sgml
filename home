@@ -1,6 +1,13 @@
 <record id="title">Egg-SGML Test</record><record id="content">
-    This is an example website for Egg-SGML.
-<p/>To start off, this is the source document of the page you are viewing:<br/>
-<div class="source"><div class="tweakA"></div><showsource path="home"/><div class="tweakB"/></div>
-<p/><p/>This will be best contrasted with another page, which you will see when you <a href="/eggs-play-nation">continue to the explanation</a>.
+
+This is an example website for Egg-SGML, which continues from the <a href="/show-readme">README</a> file of the project. <p/>
+
+Something potentially unique about this site is that it is almost completely transparent: all source documents are displayed. <p/>
+
+We start with this home page:<p/>
+<div class="source"><div class="tweakA"/><showsource path="home" highlight="record play include showsource"/><div class="tweakB"/></div>
+
+<p/><p/>
+You will no doubt be wondering about the tags <u>showsource</u>, <u>record</u>, and <u>include</u>. These will be described after contrasting this page with another: <a href="/eggs-play-nation">the explanation</a>.
+
 </record><include path="header_footer.include"/>

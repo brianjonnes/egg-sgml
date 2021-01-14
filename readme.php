@@ -1,5 +1,17 @@
 <?php
 
+class tgc_ignore {
+	public $NF;
+	function start( $q ) {
+		return 0; }
+	function repeat( $q ) {
+		return 0; }
+	function consume_text( $q, $x ) { }
+	function consume( $q, $end, $w ) {
+			if( $end ) return 1;
+			return 2;
+	}
+};
 
 class tgc_html_body {
 	public $NF;
@@ -13,6 +25,10 @@ class tgc_html_body {
 		if( $w->nodeName == 'body' ) {
 			if( $end ) return 1;
 			return 2;
+		}
+		if( $w->nodeName == 'h1' ) {
+			$this->NF = newframe( new tgc_ignore(), $q, $w );
+			return 3;
 		}
 		if( $end ) {
 			if( $w->firstChild != null ) {

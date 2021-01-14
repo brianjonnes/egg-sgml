@@ -1,22 +1,17 @@
 <tag><record id="title">Egg-SGML: Source Code</record><record id="content">
-Yet again, we start with the source document of the page you are reading: <p/>
-<div class="source"><div class="tweakA"/><showsource path="egg-sourced"/><div class="tweakB"/></div>
+Here we reach the goal of full transparency, starting with nav.include, included by header_footer.include, which was displayed on the explanation page: <p/>
 
-<p/><p/> Then nav.include: <p/>
-<div class="source"><div class="tweakA"/><showsource path="nav.include"/><div class="tweakB"/></div>
+<div class="source"><div class="tweakA"/><showsource path="nav.include" highlight="record play include showsource a.site"/><div class="tweakB"/></div>
 
-<p/><p/> We use mod_rewrite with the following .htaccess:
+<p/><p/>As may be guessed, <u>a.site</u> allows us to highlight the current page in the navigation.
+<p/><p/>
+We also show you the .htaccess file in use:<p/>
 <div class="source"><div class="tweakA"/><showphp path=".htaccess"/><div class="tweakB"/></div>
 
-<p/><p/> As templates.php does things not directly related to this discussion, we look first at the generic tag consumer: <p/>
+<p/><p/> And finally, the source document of this page (egg-sourced):<p/>
 
-<div class="source"><div class="tweakA"/><showphp path="2/tgc_generic.php"/><div class="tweakB"/></div>
+<div class="source"><div class="tweakA"/><showsource path="egg-sourced" highlight="record play include showsource showphp"/><div class="tweakB"/></div>
 
-<p/><p/>
-And then the main function called test, in origin.php: <p/>
-
-<div class="source"><div class="tweakA"/><showphp path="2/origin.php"/><div class="tweakB"/></div>
-
-For the sake of completeness, the rest of the source files are <a href="/egg-source-dead">here</a>.
+<p/><p/>Cheers!
 
 </record><include path="header_footer.include"/></tag>

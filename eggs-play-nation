@@ -1,18 +1,18 @@
 <record id="title">Delving into Egg-SGML</record><record id="content">
 
-As with the home page, and as mentioned there, we start off with the source document of this explanation page: <p/>
-<div class="source"><div class="tweakA"/><showsource path="eggs-play-nation"/><div class="tweakB"/></div>
+As with the home page we display the source document of this page (eggs-play-nation): <p/>
+<div class="source"><div class="tweakA"/><showsource path="eggs-play-nation" highlight="record play include showsource"/><div class="tweakB"/></div>
 <p/><p/>
-For convenient reference, we repeat the home page document:<br>
-<div class="source"><div class="tweakA"/><showsource path="home"/><div class="tweakB"/></div>
+For convenient reference, we repeat the home page document:<p/>
+<div class="source"><div class="tweakA"/><showsource path="home" highlight="record play include showsource"/><div class="tweakB"/></div>
 <p/><p/>
-Both documents have &lt;record id="title">, then &lt;record id="content">, followed by the same &lt;include>. <u>Reading through an HTML document from start to finish is following a depth-first search of the document tree.</u>
-<p/> Understanding that &lt;record> produces no output, we will now look at the included file (header_footer.include):
-<div class="source"><div class="tweakA"/><showsource path="header_footer.include"/><div class="tweakB"/></div>
+Note the structure of both is &lt;record id="title"> ... &lt;/record>&lt;record id="content"> ... &lt;/record>&lt;include path="header_footer.include"/>. <p/>
+Understanding that &lt;record> produces no output, we will now look at the included file (header_footer.include):<p/>
+
+<div class="source"><div class="tweakA"/><showsource path="header_footer.include" highlight="record play include showsource"/><div class="tweakB"/></div>
+
 <p/><p/>
-Looking carefully you will now find &lt;play> tags corresponding to the &lt;record> tags seen earlier. Further &lt;include> tags have been used here to reduce the length of this page.
-<p/>
-The remaining source files (egg-sgml and php) are given <a href="egg-sourced">here</a>.
+Here you will find &lt;play> tags corresponding to the &lt;record> tags seen earlier (&lt;play id="meta"/> is used on the <a href="/show-readme">README</a> page). Further &lt;include> tags have been used here to reduce the length of this page; the remaining source files are given <a href="egg-sourced">here</a>.
 <!--
 	The following server-processed tags are used here:
 <h4>record, play</h4>

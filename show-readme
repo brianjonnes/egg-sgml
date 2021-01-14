@@ -1,7 +1,18 @@
-<record id="title">Egg-SGML: README</record><record id="content">
+<record id="title">Egg-SGML: README</record><record id="meta">
+<style type="text/css">
+.local h2 { font-size: 1em; margin: 0.5em 0; }
+.local p { margin: 0.5em 0; }
+</style>
+</record><record id="content"><div class="local">
 
-<h1>README</h1>
-<div/><hr/>
+README file from Egg-SGML project.
+
+<hr/>
 <module path="../readme.php"><include_html path="README.html"/></module>
+<hr/>
 
-</record><include path="header_footer.include"/>
+<p/>Source document for this page: <p/>
+<div class="source"><div class="tweakA"/><showsource path="show-readme" highlight="record play include showsource module include_html"/><div class="tweakB"/></div>
+
+
+</div></record><include path="header_footer.include"/>
