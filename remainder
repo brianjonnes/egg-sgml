@@ -12,10 +12,10 @@
 <div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showphp path=".htaccess"/></div><div class="tweakB"/></div>
 <div class="w3-container w3-theme-l5">
 
-<p> And finally, the source document of this page (egg-sourced):</p>
+<p> And finally, the source document of this page (remainder):</p>
 
 </div>
-<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="egg-sourced" highlight="record play include showsource showphp"/></div><div class="tweakB"/></div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="remainder" highlight="record play include showsource showphp"/></div><div class="tweakB"/></div>
 <div class="w3-container w3-theme-l5">
 
 <p>Cheers!</p>

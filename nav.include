@@ -1,6 +1,6 @@
 <div class="w3-bar w3-theme-l3 w3-border-bottom w3-border-theme nav">
 	<a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/home">Egg-SGML (Home)</a.site>
-    <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/eggs-play-nation">Explanation</a.site>
-    <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/egg-sourced">Remaining Source</a.site>
+    <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/explanation">Explanation</a.site>
+    <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/remainder">Remaining Source</a.site>
     <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/show-readme">README</a.site>
 </div>

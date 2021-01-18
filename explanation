@@ -1,10 +1,10 @@
 <record id="title">Delving into Egg-SGML</record><record id="content">
 <div class="w3-container w3-theme-l5">
 
-<p>As with the home page we display the source document of this page (eggs-play-nation): </p>
+<p>As with the home page we display the source document of this page (explanation): </p>
 
 </div>
-<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="eggs-play-nation" highlight="record play include"/></div><div class="tweakB"/></div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="explanation" highlight="record play include"/></div><div class="tweakB"/></div>
 <div class="w3-container w3-theme-l5">
 
 <p> For convenient reference, we repeat the home page document:</p>
@@ -18,7 +18,7 @@
 <div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="header_footer.include" highlight="record play include showsource"/></div><div class="tweakB"/></div>
 <div class="w3-container w3-theme-l5">
 
-<p> Here you will find &lt;play> tags corresponding to the &lt;record> tags seen earlier (&lt;play id="meta"/> is used on the <a href="/show-readme">README</a> page). Further &lt;include> tags have been used here to reduce the length of this page; the remaining source files are given <a href="egg-sourced">here</a>. </p>
+<p> Here you will find &lt;play> tags corresponding to the &lt;record> tags seen earlier<!-- (&lt;play id="meta"/> is used on the <a href="/show-readme">README</a> page)-->. Further &lt;include> tags have been used here to reduce the length of this page; the remaining source files are given <a href="/remainder">here</a>. </p>
 </div>
 <!--
 	The following server-processed tags are used here:

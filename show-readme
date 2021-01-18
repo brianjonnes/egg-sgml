@@ -1,9 +1,9 @@
-<record id="title">Egg-SGML: README</record><record id="meta">
+<record id="title">Egg-SGML: README</record><!-- <record id="meta">
 <style type="text/css">
 /*.local h2 { font-size: 1em; margin: 0.5em 0; }
 .local p { margin: 0.5em 0; }*/
 </style>
-</record><record id="content"><div class="local">
+</record --><record id="content"><div class="local">
 <div class="w3-container w3-theme-l5">
 
 <p>README file from Egg-SGML project.</p>
