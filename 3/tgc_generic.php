@@ -78,10 +78,18 @@ class tgc_module {
 	}
 };
 
+#fun#ction load_module_frame( $path, $self_href, $w, $q ) {
+#	include $w->getAttribute('path');
+#	$a = new tgc_module;
+	#return newframe(new tgc_module_root($path, $self_href), $q, $w);
+#	return newframe( $a, $q, $w );
+#}
+
 function load_module_frame( $path, $self_href, $w, $q ) {
-	include $w->getAttribute('path');
-	$a = new tgc_module;
-	return newframe(new tgc_module_root($path, $self_href), $q, $w);
+	$a = 0;
+	$a = include $w->getAttribute('path');
+	$a->initialize( $path, $self_href );
+	return newframe($a, $q, $w);
 #	return newframe( $a, $q, $w );
 }
 

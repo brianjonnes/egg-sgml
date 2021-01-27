@@ -60,8 +60,11 @@ class echo_out {
 	}
 }
 
+function sr_amp_lt( $x ) {
+	return str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) );
+}
+
 function test($F) {
-	$F->q->write("<!doctype html>");
 	$x = $F->T->firstChild;
 	if ( $x == null ) 
 		return;
@@ -115,6 +118,7 @@ function test($F) {
 				$_F = $_F->P;
 //++
 				if( $_F == null ) {
+					$h = 0;
 					break; }
 //+++
 			}

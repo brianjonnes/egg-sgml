@@ -1,4 +1,4 @@
-<tag><record id="title">Egg-SGML: Source Code</record><record id="content">
+<record id="title">Egg-SGML Demo: Source Code</record><record id="content">
 <div class="w3-container w3-theme-l5">
 <p>Here we reach the goal of full transparency, starting with nav.include, included by header_footer.include, which was displayed on the explanation page: </p>
 </div>
@@ -21,4 +21,4 @@
 <p>Cheers!</p>
 
 </div>
-</record><include path="header_footer.include"/></tag>
+</record><include path="header_footer.include"/>

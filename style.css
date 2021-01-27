@@ -23,7 +23,16 @@
 
 .nav .active { font-weight: bold; }
 .nav a.w3-button:hover {  background-color: inherit !important; }
-.nav A.active:hover { background-color: #fff3ed !important; }
+.nav a.active:hover { background-color: #fff3ed !important; }
+.nav .ba div.w3-bar-item { float:none; display:inline-block;}
+.nav .ba a.w3-button {text-align:left;padding-left:6em;}
+
+.w3-show-large{display:none!important;}
+@media (max-width:992px){.w3-show-large{display:block!important}
+	.nav .ab a.w3-button { display: none!important; }
+	.nav .ab a.active { display: block!important; }
+	.nav a.w3-button {float:none;text-align:left;}
+}
 
 a { color:#ce4300; }
 p { margin: 0.5em 0; }
