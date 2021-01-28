@@ -1,5 +1,5 @@
 <?php
-#    templates.php - Egg SGML
+#    templates.php - Egg SGML request handler
 #    Copyright (C) 2021 Brian Jonnes
 
 #    This library is free software; you can redistribute it and/or
@@ -16,9 +16,9 @@
 #    License along with this library; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-include 'eggsgml.php';
+include 'parser.php';
 include 'eggsgml-loader.php';
-include 'origin.php';
+include 'eggsgml.php';
 include 'tgc_generic.php';
 
 function main_f($extension,$extoptional,$doc,$self_href) {
@@ -46,6 +46,19 @@ function attribute_exists( $w, $n ) {
 	if( $w->attributes ) for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
 		if( $w->attributes->item($m)->name == $n ) return true; }
 	return false;
+}
+
+function check_shipyard_auth($u) {
+	if( ! file_exists($u . "/shipyard.txt") ) return true;
+	$m = file_get_contents($u . '/shipyard.txt');
+	if( $m === false ) return true;
+	if( array_key_exists( 'shipyard', $_COOKIE ) ) {
+		if( $_COOKIE['shipyard'] === $m ) {
+			return true; } }
+	if( array_key_exists( 'shipyard', $_GET ) ) {
+		if( $_GET['shipyard'] === $m ) {
+			setcookie('shipyard',$m);
+			return true; } }
 }
 
 class tgc_templates {
@@ -86,19 +99,6 @@ class tgc_templates {
 	}
 };
 
-function check_shipyard_auth($u) {
-	if( ! file_exists($u . "/shipyard.txt") ) return true;
-	$m = file_get_contents($u . '/shipyard.txt');
-	if( $m === false ) return true;
-	if( array_key_exists( 'shipyard', $_COOKIE ) ) {
-		if( $_COOKIE['shipyard'] === $m ) {
-			return true; } }
-	if( array_key_exists( 'shipyard', $_GET ) ) {
-		if( $_GET['shipyard'] === $m ) {
-			setcookie('shipyard',$m);
-			return true; } }
-}
-
 function main() {
 	$u = 00;
 	if( array_key_exists( 'c', $_GET ) ) {
@@ -110,7 +110,7 @@ function main() {
 	}
 	$k = newframe(new tgc_templates, new echo_out, $d);
 	$k->P = null;
-	test($k);
+	eggsgml($k);
 }
 
 main();

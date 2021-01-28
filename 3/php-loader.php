@@ -1,6 +1,6 @@
 <?php
-#    php-loader.php - Egg SGML
-#    Copyright (C) 2020 Brian Jonnes
+#    php-loader.php - Use PHP-XML parser (contrast with eggsgml-loader).
+#    Copyright (C) 2021 Brian Jonnes
 
 #    This library is free software; you can redistribute it and/or
 #    modify it under the terms of the GNU Lesser General Public
