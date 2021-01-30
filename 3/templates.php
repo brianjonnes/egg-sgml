@@ -21,7 +21,17 @@ include 'eggsgml-loader.php';
 include 'eggsgml.php';
 include 'tgc_generic.php';
 
+class environ {
+	public $self_href;
+	public $sct;
+	function __construct() {
+		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
+	}
+};
+
 function main_f($extension,$extoptional,$doc,$self_href) {
+	$env = new environ;
+	$env->self_href = $self_href;
 	do {
 		if( $extension != '' ) {
 			if( file_exists( $doc . $extension ) ) {
@@ -36,7 +46,7 @@ function main_f($extension,$extoptional,$doc,$self_href) {
 			return; }			
 		$d = load_eggsgml_file( $doc  );
 	} while(0);
-	$k = newframe(new tgc_generic(dirname($doc,1),$self_href), new echo_out, $d);
+	$k = newframe(new tgc_generic(dirname($doc,1),$env), new echo_out, $d);
 	echo ("<!doctype html>");
 	return $k;
 }
@@ -70,20 +80,18 @@ class tgc_templates {
 	function consume_text( $q, $x ) {
 		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
-		$u = 00;
 		if( $w->nodeName == 'main' ) {
 			if( $end ) return 1;
-			if( array_key_exists( 'c', $_GET ) ) {
-				$u = '..'; } else { $u = '../..'; }
+			$path = $_SERVER['DOCUMENT_ROOT'];
 			if( ! attribute_exists( $w, "redirect-to-ssl" ) )
 				if( ! $_SERVER['HTTPS'] ) {
 					header('Location:https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 					return 1; }
-			if( ! check_shipyard_auth($u) ) {
-				$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $u .'/shipyard', '/shipyard');
+			if( ! check_shipyard_auth($path) ) {
+				$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path .'/shipyard', '/shipyard');
 				return 3; }
 			if( $_GET['t'] == '/' ) {
-				$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $u .'/' . $w->getAttribute('rootdoc'), $_GET['t'] );
+				$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . '/' . $w->getAttribute('rootdoc'), $_GET['t'] );
 				if( ! $this->NF ) return 0;
 				return 3;
 			}
@@ -91,7 +99,7 @@ class tgc_templates {
 				header('Location:https://' . $_SERVER['HTTP_HOST'] . '/' );
 				return 1;
 			}
-			$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $u . $_GET['t'], $_GET['t'] );
+			$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );
 			if( ! $this->NF ) return 0;
 			return 3;
 		}
@@ -100,11 +108,9 @@ class tgc_templates {
 };
 
 function main() {
-	$u = 00;
-	if( array_key_exists( 'c', $_GET ) ) {
-		$u = '..'; } else { $u = '../..'; }
-	if( file_exists( $u . '/templates_config.xml' ) ) {
-		$d = load_eggsgml_file( $u . '/templates_config.xml' );
+	$m = $_SERVER['DOCUMENT_ROOT'];
+	if( file_exists( $m . '/templates_config.xml' ) ) {
+		$d = load_eggsgml_file( $m . '/templates_config.xml' );
 	} else {
 		$d = load_eggsgml_file( 'templates_config.xml' );
 	}
