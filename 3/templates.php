@@ -22,15 +22,14 @@ include 'eggsgml.php';
 include 'tgc_generic.php';
 
 class environ {
-	public $self_href;
+	public $self_href, $shipyard;
 	public $sct;
 	function __construct() {
 		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
 	}
 };
 
-function main_f($extension,$extoptional,$doc,$self_href) {
-	$env = new environ;
+function main_f($env,$extension,$extoptional,$doc,$self_href) {
 	$env->self_href = $self_href;
 	do {
 		if( $extension != '' ) {
@@ -80,18 +79,26 @@ class tgc_templates {
 	function consume_text( $q, $x ) {
 		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
+		$env = 00;
 		if( $w->nodeName == 'main' ) {
 			if( $end ) return 1;
 			$path = $_SERVER['DOCUMENT_ROOT'];
-			if( ! attribute_exists( $w, "redirect-to-ssl" ) )
-				if( ! $_SERVER['HTTPS'] ) {
-					header('Location:https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-					return 1; }
+			$env = new environ;
+			$env->shipyard = file_exists( $path . '/shipyard.txt' );
+			if( $env->shipyard ) {
+				$env->shipyard_auth = file_get_contents($path . '/shipyard.txt'); }
+			while( attribute_exists( $w, "redirect-to-ssl" ) ) {
+				if( array_key_exists('HTTPS',$_SERVER) )
+					if( $_SERVER['HTTPS'] == 'on' ) break;
+				header('Location:https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+				return 1; 
+			}
 			if( ! check_shipyard_auth($path) ) {
-				$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path .'/shipyard', '/shipyard');
+				$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path .'/shipyard', '/shipyard');
+				if( ! $this->NF ) return 0;
 				return 3; }
 			if( $_GET['t'] == '/' ) {
-				$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . '/' . $w->getAttribute('rootdoc'), $_GET['t'] );
+				$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . '/' . $w->getAttribute('rootdoc'), $_GET['t'] );
 				if( ! $this->NF ) return 0;
 				return 3;
 			}
@@ -99,7 +106,7 @@ class tgc_templates {
 				header('Location:https://' . $_SERVER['HTTP_HOST'] . '/' );
 				return 1;
 			}
-			$this->NF = main_f( $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );
+			$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );
 			if( ! $this->NF ) return 0;
 			return 3;
 		}
