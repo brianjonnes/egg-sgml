@@ -106,6 +106,10 @@ class tgc_generic {
 			return 2; }
 		if( $w->nodeName == 'tag' ) {
 			return 2; }
+		if( $w->nodeName == 'eggsgml_version' ) {
+			if( $end ) return 1;
+			$q->write( sr_amp_lt( eggsgml_version() ) );
+			return 2; }
 		if( $w->nodeName == 'a.site' ) {
 			if( $end ) {
 				$q->write('</a>');

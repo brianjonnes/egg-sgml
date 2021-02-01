@@ -1,4 +1,5 @@
 <?php
+include '../1/version.php';
 #    templates.php - Egg SGML request handler
 #    Copyright (C) 2021 Brian Jonnes
 
