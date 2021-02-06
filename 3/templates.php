@@ -24,9 +24,10 @@ include 'tgc_generic.php';
 
 class environ {
 	public $self_href, $shipyard;
-	public $sct;
+	public $sct; public $scriptnow;
 	function __construct() {
 		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
+		$this->scriptnow = time();
 	}
 };
 
