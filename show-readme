@@ -9,7 +9,7 @@
 <p>README file from Egg-SGML project.</p>
 
 <hr/>
-<module path="../readme.php"><include_html path="README.html"/></module>
+<module path="readme.php"><include_html path="README.html"/></module>
 <hr/>
 
 <p>Source document for this page: </p>

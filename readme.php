@@ -71,7 +71,7 @@ class tgc_html_doc {
 class tgc_module_root {
 	public $NF;
 	public $path, $self_href;
-	function __construct($path,$self_href) {
+	function initialize($path,$self_href) {
 		$this->path = $path;
 		$this->self_href = $self_href;
 	}
@@ -97,4 +97,5 @@ class tgc_module_root {
 	}
 };
 
+return new tgc_module_root;
 ?>

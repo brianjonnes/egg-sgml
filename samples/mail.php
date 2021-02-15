@@ -308,6 +308,7 @@ class tgc_module_mail {
 				}
 			}
 			$q->write( '</textarea>' );
+			return 1;
 		}
 		if( $w->nodeName == 'error.exist' ) {
 			if( $end ) return 1;
