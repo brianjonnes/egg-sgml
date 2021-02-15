@@ -65,10 +65,10 @@ function check_shipyard_auth($u) {
 	if( $m === false ) return true;
 	if( array_key_exists( 'shipyard', $_COOKIE ) ) {
 		if( $_COOKIE['shipyard'] === $m ) {
-			return true; } }
+			goto K; } }
 	if( array_key_exists( 'shipyard', $_GET ) ) {
 		if( $_GET['shipyard'] === $m ) {
-			setcookie('shipyard',$m);
+	K:		setcookie('shipyard',$m,time()+864000);
 			return true; } }
 }
 
