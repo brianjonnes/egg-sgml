@@ -175,6 +175,10 @@ class tgc_generic {
 			if ($end) return 1;
 			$q->write(str_replace('<','&lt;',str_replace('&','&amp;',$_SERVER[$w->getAttribute('name')])));
 			return 1; }
+		if( $w->nodeName == 'shipyard_login_failed' ) {
+			if ($end) return 1;
+			if( array_key_exists( 'shipyard', $_GET ) ) return 2;
+			return 1; }
 		if( $w->nodeName == 'script' ) {
 			if ($end) return 1;
 			$q->write('<' . $w->nodeName);
