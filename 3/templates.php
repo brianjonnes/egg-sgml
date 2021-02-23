@@ -25,6 +25,7 @@ include 'tgc_generic.php';
 class environ {
 	public $self_href, $shipyard;
 	public $sct; public $scriptnow;
+	public $file_ext;
 	function __construct() {
 		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
 		$this->scriptnow = time();
@@ -95,6 +96,7 @@ class tgc_templates {
 				header('Location:https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 				return 1; 
 			}
+			$env->file_ext = $w->getAttribute('extension');
 			if( ! check_shipyard_auth($path) ) {
 				$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path .'/shipyard', '/shipyard');
 				if( ! $this->NF ) return 0;

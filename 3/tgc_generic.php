@@ -106,6 +106,14 @@ class tgc_generic {
 			return 2; }
 		if( $w->nodeName == 'tag' ) {
 			return 2; }
+		if( $w->nodeName == 'sailing' ) {
+			if( $end ) return 1;
+			if( $this->env->shipyard ) return 1;
+			return 2; }
+		if( $w->nodeName == 'shipyard' ) {
+			if( $end ) return 1;
+			if( $this->env->shipyard ) return 2;
+			return 1; }
 		if( $w->nodeName == 'eggsgml_version' ) {
 			if( $end ) return 1;
 			$q->write( sr_amp_lt( eggsgml_version() ) );
@@ -188,8 +196,9 @@ class tgc_generic {
 					$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
 			}
 			$q->write('>');
-			if( $w->firstChild != null ) {
-				$q->write( $w->firstChild->data ); }
+			$w1 = $w->firstChild;
+			while( $w1 != null ) {
+				$q->write( $w1->data ); $w1 = $w1->nextSibling; }
 			$q->write('</script>');
 			return 1; }
 		if( $end ) {
