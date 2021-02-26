@@ -25,7 +25,7 @@ include 'tgc_generic.php';
 class environ {
 	public $self_href, $shipyard;
 	public $sct; public $scriptnow;
-	public $file_ext;
+	public $file_ext; public $templatefile;
 	function __construct() {
 		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
 		$this->scriptnow = time();
@@ -37,6 +37,7 @@ function main_f($env,$extension,$extoptional,$doc,$self_href) {
 	do {
 		if( $extension != '' ) {
 			if( file_exists( $doc . $extension ) ) {
+				$env->templatefile = $doc . $extension;
 				$d = load_eggsgml_file( $doc . $extension );
 				break; }
 			if( ! $extoptional ) {
@@ -46,6 +47,7 @@ function main_f($env,$extension,$extoptional,$doc,$self_href) {
 		if( ! file_exists( $doc ) ) {
 			http_response_code(404);
 			return; }			
+		$env->templatefile = $doc;
 		$d = load_eggsgml_file( $doc  );
 	} while(0);
 	$k = newframe(new tgc_generic(dirname($doc,1),$env), new echo_out, $d);
