@@ -33,6 +33,7 @@ class environ {
 };
 
 function main_f($env,$extension,$extoptional,$doc,$self_href) {
+	$c = null; $b = 0;
 	$env->self_href = $self_href;
 	do {
 		if( $extension != '' ) {
@@ -50,6 +51,25 @@ function main_f($env,$extension,$extoptional,$doc,$self_href) {
 		$env->templatefile = $doc;
 		$d = load_eggsgml_file( $doc  );
 	} while(0);
+	$m = eggsgml_descendent( $d, 'cache_control' );
+	if( $m ) if( attribute_exists($m,'static') ) {
+m:		$c = apache_request_headers();
+		if( array_key_exists('If-Modified-Since',$c) ) {
+			$b = strtotime($c['If-Modified-Since']);
+			if( filemtime($env->templatefile) <= $b ) {
+				http_response_code(304);
+				return; }
+		}
+		header('Last-Modified: ' . date('r',filemtime($env->templatefile)));
+		header('Cache-Control: max-age=0');
+	} else if( attribute_exists($m,'dynamic') ) {
+n:		header('Last-Modified: ' . date('r',$env->scriptnow));
+		header('Cache-Control: max-age=0');
+	} else if( attribute_exists($m,'querystring') ) {
+		if( array_key_exists( 'REDIRECT_QUERY_STRING', $_SERVER ) ) {
+			goto n; }
+		goto m;
+	}
 	$k = newframe(new tgc_generic(dirname($doc,1),$env), new echo_out, $d);
 	echo ("<!doctype html>");
 	return $k;

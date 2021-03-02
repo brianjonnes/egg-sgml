@@ -100,6 +100,17 @@ class tgc_generic {
 	function consume( $q, $end, $w ) {
 		$m = $f = $a = 00;
 		# local $m, $f
+		if( $w->nodeName == 'cache_control' ) {
+			return 1; }
+		if( $w->nodeName == 'form.cache_dynamic' ) {
+			if( $end ) {
+				$q->write('</form>'); return 1; }
+			$q->write('<form');
+			write_attributes( $q, $w, array('action') );
+			if( $w->getAttribute('method') == 'post' ) {
+				$q->write(' action="' . sr_amp_quot( $_SERVER['REDIRECT_URL'] ) . '?' . rand(0,100) . '"' ); }
+			$q->write('>');
+			return 2; }
 		if( $w->nodeName == 'doctype' ) {
 			if( $end ) return 1;
 			$q->write('<!' . $w->getAttribute('raw') . '>');

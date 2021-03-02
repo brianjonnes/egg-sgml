@@ -58,6 +58,21 @@ function sr_amp_lt( $x ) {
 	return str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) );
 }
 
+function sr_amp_quot( $x ) {
+	return str_replace('"','&quot;', str_replace( '&', '&amp;', $x ) );
+}
+
+function write_attributes( $q, $w, $f ) {
+	$m = 00;
+	for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
+		if( array_search( $w->attributes->item($m)->name, $f ) === false ) {
+			$q->write(' ' . $w->attributes->item($m)->name);
+			if( $w->attributes->item($m)->value != null ) {
+				$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
+		}
+	}
+}
+
 function eggsgml($F) {
 	$x = $F->T->firstChild;
 	if ( $x == null ) 
@@ -138,6 +153,39 @@ function eggsgml($F) {
 				if( $F == null ) {
 					return; }
 				$x = $F->x;
+			} else {
+				$x = $b;
+			}
+		}
+	}
+}
+
+function eggsgml_descendent($T,$t) {
+	$x = $T->firstChild;
+	if ( $x == null ) 
+		return;
+	while (1) {
+		while (1) {
+			if( $x->nodeType == 8 ) {
+				break; }
+			if ( $x->nodeType == 3 ) {
+				break; }
+			if( $x->nodeName == $t ) {
+				return $x; }
+			$b = $x->firstChild;
+			if( $b != null ) {
+				$x = $b;
+			} else {
+				break; }
+		}
+		while (1) {
+			$b = $x->nextSibling;
+			if( $b != null ) {
+				$x = $b;
+				break; }
+			$b = $x->parentNode;
+			if( $b === $T ) {
+				return null;
 			} else {
 				$x = $b;
 			}
