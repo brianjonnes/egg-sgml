@@ -1,6 +1,6 @@
 RewriteEngine On
 
-RewriteRule ^([^.]*)$ /3/templates.php?t=%{REQUEST_URI} [END]
+RewriteRule ^([^.]*)$ /3/templates.php?t=%{REQUEST_URI} [QSA,END]
 # Do not use the above  rule. You will generally have egg-sgml under your
 # web root, and the rule will then be:
 # RewriteRule ^([^.]*)$ /egg-sgml/2/templates.php?t=%{REQUEST_URI} [END]
