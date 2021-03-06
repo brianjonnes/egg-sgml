@@ -1,0 +1,15 @@
+<cache_control static/><record id="title">Egg-SGML: Versioning</record><record id="content">
+<div class="w3-container w3-theme-l5">
+
+<p>Dynamic linking introduces the problem of api compatibility. Any significant changes in the library routines may mean that the application using the library needs rigorous testing when the library is upgraded. Libraries are supposed to reduce your workload, but now you are at the mercy of the library author.</p>
+
+<p>Being a responsible library author is to maintain each api version, as long as there is a single user of it. And while all software aught to have a maintainer, this is not always the case, so that you cannot ever be sure of this.</p>
+
+<p>Responsibility has its bounds. While it might seem a service to the users of your library to backport new features to older api's, you are removing the ingredient of necessity.</p>
+
+<p>In Egg-SGML we thus have two version numbers: the release version and the api version. The release is incremented for almost any change.</p>
+
+<p>In terms of name conflicts, two lists of identifiers are crucial: the list of php classes and functions, and the list of tag names. Starting with api 4 this is given in 'identifiers.txt'.</p>
+
+</div>
+</record><include path="header_footer.include"/>

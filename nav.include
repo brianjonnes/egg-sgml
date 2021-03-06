@@ -6,6 +6,7 @@
     <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/explanation">Explanation</a.site>
     <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/remainder">Remaining Source</a.site>
     <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/show-readme">README</a.site>
+    <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/versioning">Versioning</a.site>
     <a.site class="w3-bar-item w3-button" activeclass="w3-theme-l5 active" href="/show-changelog">Changelog</a.site>
 </div>
 </div>
