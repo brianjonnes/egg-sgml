@@ -1,0 +1,12 @@
+<sailing><redirect location="/"/></sailing><module path="../4/tgc_test_a.php">
+<html><body>
+<module_list>
+Modules:<br/>
+<item>> <module_name/> OK<br/></item>
+</module_list>
+<url_list>
+Urls:<br/>
+<item><url_value/><br/></item>
+</url_list>
+</body></html>
+</module>
