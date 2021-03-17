@@ -129,6 +129,10 @@ class tgc_generic {
 			if( $end ) return 1;
 			$q->write( sr_amp_lt( eggsgml_version() ) );
 			return 2; }
+		if( $w->nodeName == 'eggsgml_api_version' ) {
+			if( $end ) return 1;
+			$q->write( sr_amp_lt( basename(dirname($_SERVER['PHP_SELF'])) ) );
+			return 2; }
 		if( $w->nodeName == 'a.site' ) {
 			if( $end ) {
 				$q->write('</a>');

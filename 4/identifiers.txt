@@ -11,6 +11,7 @@ tgc_generic
 	sailing
 	shipyard
 	eggsgml_version
+	eggsgml_api_version
 	a.site
 	module
 	include
