@@ -84,6 +84,12 @@ function load_module_frame( $path, $env, $w, $q ) {
 	return newframe( $a, $q, $w);
 }
 
+function load_module_frame_api( $path, $env, $w, $q ) {
+	$a = include $_SERVER['DOCUMENT_ROOT'] . '/' . $env->api . '/' . $w->getAttribute('path');
+	$a->initialize( $path, $env );
+	return newframe( $a, $q, $w );
+}
+
 class tgc_generic {
 	public $path, $env;
 	function __construct($path,$env) {
@@ -131,7 +137,7 @@ class tgc_generic {
 			return 2; }
 		if( $w->nodeName == 'eggsgml_api_version' ) {
 			if( $end ) return 1;
-			$q->write( sr_amp_lt( basename(dirname($_SERVER['PHP_SELF'])) ) );
+			$q->write( sr_amp_lt( $this->env->api ) );
 			return 2; }
 		if( $w->nodeName == 'a.site' ) {
 			if( $end ) {
@@ -158,7 +164,11 @@ class tgc_generic {
 			return 2; }
 		if( $w->nodeName == 'module' ) {
 			if ($end) return 1;
-			$this->NF = load_module_frame($this->path,$this->env,$w,$q);
+			if( attribute_exists( $w, 'api' ) ) {
+				$this->NF = load_module_frame_api($this->path,$this->env,$w,$q);
+			} else {
+				$this->NF = load_module_frame($this->path,$this->env,$w,$q);
+			}
 			return 3; }
 		if( $w->nodeName == 'include' ) {
 			if ($end) return 1;

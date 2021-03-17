@@ -42,6 +42,7 @@ eggsgml_parser
 Functions
 
 load_module_frame
+load_module_frame_api
 newframe
 sr_amp_lt
 sr_amp_quot

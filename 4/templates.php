@@ -26,6 +26,7 @@ class environ {
 	public $self_href, $shipyard;
 	public $sct; public $scriptnow;
 	public $file_ext; public $templatefile;
+	public $api;
 	function __construct() {
 		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
 		$this->scriptnow = time();
@@ -109,6 +110,7 @@ class tgc_templates {
 			if( $end ) return 1;
 			$path = $_SERVER['DOCUMENT_ROOT'];
 			$env = new environ;
+			$env->api = basename(dirname($_SERVER['PHP_SELF']));
 			$env->shipyard = file_exists( $path . '/shipyard.txt' );
 			if( $env->shipyard ) {
 				$env->shipyard_auth = file_get_contents($path . '/shipyard.txt'); }

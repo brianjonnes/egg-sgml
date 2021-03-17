@@ -555,7 +555,7 @@ class eggsgml_parser {
 				} else if( $m[$c] >= 'a' && $m[$c] <= 'z' || $m[$c] >= 'A' && $m[$c] <= 'Z' || $m[$c] == '_' ) {
 					$this->sR .= $m[$c];
 					$this->T->tagattr( $this->s2, '' );
-					$this->s1 = $m[$c];
+					$this->s2 = $m[$c];
 					$c += 1;
 					$this->w = 13;
 				} else if( $m[$c] == '>' ) {
