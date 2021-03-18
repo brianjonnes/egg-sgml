@@ -99,7 +99,11 @@ class tgc_module_test__a {
 			if( $end ) return 1;
 			if( ! array_key_exists( $w->getAttribute('path'), $this->modules->a ) ) {
 				$this->modules->a[$w->getAttribute('path')] = 1;
-				$a = include $this->testpath . '/' . $w->getAttribute('path');
+				if( attribute_exists($w,'api') ) {
+					$a = include $_SERVER['DOCUMENT_ROOT'] . '/' . $this->env->api . '/' . $w->getAttribute('path');
+				} else {
+					$a = include $this->testpath . '/' . $w->getAttribute('path');
+				}
 			}
 			return 2; }
 		if( $w->nodeName == 'a' ) {
