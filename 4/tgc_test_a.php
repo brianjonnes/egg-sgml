@@ -209,10 +209,20 @@ class tgc_module_test__url_item {
 	function consume_text( $q, $x ) {
 		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
-		if( $w->nodeName == 'url_value' ) {
+		switch( $w->nodeName ) {
+		case 'url_value':
 			if( $end ) return 1;
 			$q->write( sr_amp_lt( $this->urls[$this->m] ) );
-			return 1; }
+			return 1;
+		case 'a.url':
+			if( $end ) {
+				$q->write('</a>'); return 1; }
+			$q->write('<a');
+			write_attributes( $q, $w, array('href') );
+			$q->write(' href="/tests/test_2b?U=' . sr_25( $this->urls[$this->m], '&#+ ' ) . '"' );
+			$q->write('>');
+			return 2;
+		}
 		return 0;
 	}
 };

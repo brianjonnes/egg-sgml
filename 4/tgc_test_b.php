@@ -83,6 +83,9 @@ class tgc_test_b__a {
 		case 'img':
 			if( $end ) return 1;
 			$this->url( $w, 'src' ); return 2;
+		case 'link':
+			if( $end ) return 1;
+			$this->url( $w, 'href' ); return 2;
 		}
 		return 2;
 	}
