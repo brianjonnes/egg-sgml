@@ -16,6 +16,16 @@
 #    License along with this library; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+function _sr_25( $x, $k ) {
+	$d = 00; $n = '';
+	for( $d = 0; $d < strlen($x); $d += 1 ) {
+		if( $x[$d] == '%' || strpos($k,$x[$d]) !== false ) {
+			$n .= '%' . str_pad( dechex(ord($x[$d])), 2, '0', STR_PAD_LEFT );
+		} else $n .= $x[$d];
+	}
+	return $n;
+}
+
 class null_buffer2 {
 	function write($m) { }
 };
@@ -219,7 +229,7 @@ class tgc_module_test__url_item {
 				$q->write('</a>'); return 1; }
 			$q->write('<a');
 			write_attributes( $q, $w, array('href') );
-			$q->write(' href="/tests/test_2b?U=' . sr_25( $this->urls[$this->m], '&#+ ' ) . '"' );
+			$q->write(' href="/tests/test_2b?U=' . _sr_25( $this->urls[$this->m], '&#+ ' ) . '"' );
 			$q->write('>');
 			return 2;
 		}
@@ -280,7 +290,7 @@ class tgc_module_test__clips_item {
 				$q->write('</a>'); return 1; }
 			$q->write('<a');
 			write_attributes( $q, $w, array('href') );
-			$q->write(' href="/tests/test_3b?clip=' . sr_25( $this->clips[$this->m], '&#+ ' ) . '"' );
+			$q->write(' href="/tests/test_3b?clip=' . _sr_25( $this->clips[$this->m], '&#+ ' ) . '"' );
 			$q->write('>');
 			return 2;
 		}
