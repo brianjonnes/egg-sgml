@@ -270,10 +270,20 @@ class tgc_module_test__clips_item {
 	function consume_text( $q, $x ) {
 		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
-		if( $w->nodeName == 'clip_name' ) {
+		switch($w->nodeName) {
+		case 'clip_name':
 			if( $end ) return 1;
 			$q->write( sr_amp_lt( $this->clips[$this->m] ) );
-			return 1; }
+			return 1;
+		case 'a.clip':
+			if( $end ) {
+				$q->write('</a>'); return 1; }
+			$q->write('<a');
+			write_attributes( $q, $w, array('href') );
+			$q->write(' href="/tests/test_3b?clip=' . sr_25( $this->clips[$this->m], '&#+ ' ) . '"' );
+			$q->write('>');
+			return 2;
+		}
 		return 0;
 	}
 };
