@@ -5,6 +5,7 @@ tgc_sgml_source
 tgc_module
 tgc_generic
 	cache_control
+		static, dynamic, querystring
 	form.cache_control
 	doctype
 	tag
@@ -24,7 +25,7 @@ tgc_generic
 	shipyard_login_failed
 tgc_templates
 	main
-
+		sts-expire, redirect-to-ssl, rootdoc, extension, extension-optional, no-doctype
 
 Other Classes
 

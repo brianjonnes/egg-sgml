@@ -26,7 +26,7 @@ class environ {
 	public $self_href, $shipyard;
 	public $sct; public $scriptnow;
 	public $file_ext; public $templatefile;
-	public $api;
+	public $api, $nodoctype;
 	function __construct() {
 		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
 		$this->scriptnow = time();
@@ -34,13 +34,12 @@ class environ {
 };
 
 function main_f($env,$extension,$extoptional,$doc,$self_href) {
-	$c = null; $b = 0;
+	$c = $d = $m = null; $b = 0;
 	$env->self_href = $self_href;
 	do {
 		if( $extension != '' ) {
 			if( file_exists( $doc . $extension ) ) {
 				$env->templatefile = $doc . $extension;
-				$d = load_eggsgml_file( $doc . $extension );
 				break; }
 			if( ! $extoptional ) {
 				http_response_code(404);
@@ -50,8 +49,8 @@ function main_f($env,$extension,$extoptional,$doc,$self_href) {
 			http_response_code(404);
 			return; }			
 		$env->templatefile = $doc;
-		$d = load_eggsgml_file( $doc  );
 	} while(0);
+	$d = load_eggsgml_file( $env->templatefile );
 	$m = eggsgml_descendent( $d, 'cache_control' );
 	if( $m ) if( attribute_exists($m,'static') ) {
 m:		$c = apache_request_headers();
@@ -72,7 +71,8 @@ n:		header('Last-Modified: ' . date('r',$env->scriptnow));
 		goto m;
 	}
 	$k = newframe(new tgc_generic(dirname($doc,1),$env), new echo_out, $d);
-	echo ("<!doctype html>");
+	if( ! $env->nodoctype ) {
+		echo ("<!doctype html>"); }
 	return $k;
 }
 
@@ -110,6 +110,7 @@ class tgc_templates {
 			if( $end ) return 1;
 			$path = $_SERVER['DOCUMENT_ROOT'];
 			$env = new environ;
+			$env->nodoctype = attribute_exists( $w, 'no-doctype' );
 			$env->api = basename(dirname($_SERVER['PHP_SELF']));
 			$env->shipyard = file_exists( $path . '/shipyard.txt' );
 			if( $env->shipyard ) {
