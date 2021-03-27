@@ -90,13 +90,14 @@ class tgc_module_test__a {
 	public $testpath;
 	public $modules, $urls;
 	public $clips;
-	function __construct($path,$env,$testpath,$modules,$urls) {
+	function __construct($path,$env,$testpath,$modules,$urls,$tags) {
 		$this->path = $path;
 		$this->env = $env;
 		$this->testpath = $testpath;
 		$this->modules = $modules;
 		$this->urls = $urls;
 		$this->clips = new mtgc_module_test__list;
+		$this->tags = $tags;
 	}
 	function start( $q ) {
 		return 0; }
@@ -105,6 +106,11 @@ class tgc_module_test__a {
 	function consume_text( $q, $x ) {
 		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
+		if( array_key_exists( $w->nodeName, $this->tags->a ) )
+			$this->tags->a[$w->nodeName] += 1;
+		else
+			$this->tags->a[$w->nodeName] = 1;
+
 		if( $w->nodeName == 'module' ) {
 			if( $end ) return 1;
 			if( ! array_key_exists( $w->getAttribute('path'), $this->modules->a ) ) {
@@ -262,6 +268,71 @@ class tgc_module_test__urls {
 	}
 };
 
+class tgc_module_test__tag_item {
+	public $NF;
+	public $path, $env;
+	public $tags, $_tags;
+	function __construct($path,$env,$tags) {
+		$this->path = $path;
+		$this->env = $env;
+		$this->_tags = $tags->a;
+		$this->tags = array_keys($tags->a);
+	}
+	function start( $q ) {
+		$this->m = 0;
+		return 0; }
+	function repeat( $q ) {
+		$this->m += 1;
+		return $this->m < count($this->tags); }
+	function consume_text( $q, $x ) {
+		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
+	function consume( $q, $end, $w ) {
+		switch( $w->nodeName ) {
+		case 'tag_name':
+			if( $end ) return 1;
+			$q->write( sr_amp_lt( $this->tags[$this->m] ) );
+			return 1;
+		case 'tally':
+			if( $end ) return 1;
+			$q->write( sr_amp_lt( $this->_tags[ $this->tags[$this->m] ] ) );
+/*		case 'a.url':
+			if( $end ) {
+				$q->write('</a>'); return 1; }
+			$q->write('<a');
+			write_attributes( $q, $w, array('href') );
+			$q->write(' href="/tests/test_2b?U=' . _sr_25( $this->urls[$this->m], '&#+ ' ) . '"' );
+			$q->write('>');
+			return 2; */
+		}
+		return 0;
+	}
+};
+
+class tgc_module_test__tags {
+	public $NF;
+	public $path, $env;
+	public $tags;
+	function __construct($path,$env,$tags) {
+		$this->path = $path;
+		$this->env = $env;
+		$this->tags = $tags;
+	}
+	function start( $q ) {
+		return 0; }
+	function repeat( $q ) {
+		return 0; }
+	function consume_text( $q, $x ) {
+		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
+	function consume( $q, $end, $w ) {
+		$a = 00; $d = $k = $n = null;
+		if( $w->nodeName == 'item' ) {
+			$this->NF = newframe(new tgc_module_test__tag_item($this->path,$this->env,$this->tags),$q,$w);
+			return 3;
+		}
+		return 0;
+	}
+};
+
 class tgc_module_test__clips_item {
 	public $NF;
 	public $path, $env;
@@ -387,13 +458,14 @@ class tgc_module_test__files {
 class mtgc_module_test {
 	public $NF;
 	public $path, $env;
-	public $c, $modules;
+	public $c, $modules, $tags;
 	function initialize($path,$env) {
 		$this->path = $path;
 		$this->env = $env;
 		$this->modules = new mtgc_module_test__modules;
 		$this->urls = new mtgc_module_test__urls;
-		$this->c = new tgc_module_test__a($path,$env,$_SERVER['DOCUMENT_ROOT'],$this->modules,$this->urls);
+		$this->tags = new mtgc_module_test__list;
+		$this->c = new tgc_module_test__a($path,$env,$_SERVER['DOCUMENT_ROOT'],$this->modules,$this->urls,$this->tags);
 	}
 	function start( $q ) {
 		return 0; }
@@ -403,7 +475,8 @@ class mtgc_module_test {
 		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
 		$a = 00; $d = $k = $n = null;
-		if( $w->nodeName == 'module_list' ) {
+		switch( $w->nodeName ) {
+		case 'module_list':
 			if( $end ) return 1;
 			$n = opendir( $_SERVER['DOCUMENT_ROOT'] );
 			while( ( $a = readdir($n) ) !== false ) {
@@ -415,12 +488,16 @@ class mtgc_module_test {
 				}
 			}
 			$this->NF = newframe(new tgc_module_test__modules($this->path,$this->env,$this->modules),$q,$w);
-			return 3; }
-		if( $w->nodeName == 'url_list' ) {
+			return 3;
+		case 'url_list':
 			if( $end ) return 1;
 			$this->NF = newframe( new tgc_module_test__urls($this->path,$this->env,$this->urls),$q,$w);
-			return 3; }
-		if( $w->nodeName == 'file_list' ) {
+			return 3;
+		case 'tag_list':
+			if( $end ) return 1;
+			$this->NF = newframe( new tgc_module_test__tags($this->path,$this->env,$this->tags),$q,$w);
+			return 3;
+		case 'file_list':
 			if( $end ) return 1;
 			$k = new tgc_module_test__files($this->path,$this->env);
 			if( ! $k->no_files ) {
@@ -428,11 +505,12 @@ class mtgc_module_test {
 			} else {
 				$this->NF = newframe(new tgc_module_test__empty,$q,$w);
 			}
-			return 3; }
-		if( $w->nodeName == 'clips_list' ) {
+			return 3;
+		case 'clips_list':
 			if( $end ) return 1;
 			$this->NF = newframe( new tgc_module_test__clips($this->path,$this->env,$this->c->clips),$q,$w);
-			return 3; }
+			return 3;
+		}
 		return 0;
 	}
 }
