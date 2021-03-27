@@ -96,6 +96,20 @@ class tgc_test_c__page {
 			$d = load_eggsgml_file( $_SERVER['DOCUMENT_ROOT'] . '/' . $this->a );
 			$this->NF = newframe($this->c, $q, $d);
 			return 3;
+		case 'cache_control_value':
+			if( $end ) return 1;
+			$d = load_eggsgml_file( $_SERVER['DOCUMENT_ROOT'] . '/' . $this->a );
+			$d = eggsgml_descendent( $d, 'cache_control' );
+			if( $d ) {
+				if( attribute_exists( $d, 'static' ) ) {
+					$q->write('static');
+				} else if( attribute_exists( $d, 'dynamic' ) ) {
+					$q->write('dynamic');
+				} else if( attribute_exists( $d, 'querystring' ) ) {
+					$q->write('querystring');
+				}
+			}
+			return 2;
 		case 'page_name':
 			if( $end ) return 1;
 			$q->write( sr_amp_lt( $this->a ) );
