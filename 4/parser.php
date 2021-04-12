@@ -16,6 +16,18 @@
 #    License along with this library; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+function load_eggsgml_file_2( $m, $u, $doc ) {
+	$k = null;
+
+	$k = fopen($doc,'r');
+	while(1) {
+		$n = fread( $k, 77 );
+		if( $n == '' ) break;
+		$u->process_chunk( $n );
+	}
+	$u->process_eof();
+}
+
 class eggsgml_tag_receiver {
 	function new_tag_formation( $j ) { }
 	function canceltag() {	}
