@@ -26,6 +26,30 @@ class environ {
 		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
 		$this->scriptnow = time();
 	}
+	function write_end_of_tag( $q, $tag ) {
+		if( array_key_exists( strtolower($tag), $this->sct ) ) {
+			$q->write('/>');
+		} else {
+			$q->write('>');
+		}
+	}
+	function write_close_tag( $q, $tag ) {
+		if( ! array_key_exists( strtolower($tag), $this->sct ) ) {
+			$q->write('</' . $w->tag . '>'); }
+	}
+	function _untested__write_prefixed_attributes( $q, $w, $f ) {
+		$m = 00;
+		for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
+			if( substr( $w->attributes->item($m)->name, 0, 2 ) == 'a-' ) {
+				$s = substr( $w->attributes->item($m)->name, 2 );
+				if( array_search( $s, $f ) === false ) {
+					$q->write(' ' . $s);
+					if( $w->attributes->item($m)->value != null ) {
+						$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
+				}
+			}
+		}
+	}
 };
 
 function main_f($env,$extension,$extoptional,$doc,$self_href) {
