@@ -16,6 +16,7 @@ tgc_generic
 	a.site
 	module
 	include
+		interim-no-relative
 	showsource
 	showphp
 	redirect

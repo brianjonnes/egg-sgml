@@ -88,6 +88,7 @@ function load_module_frame_api( $path, $env, $w, $q ) {
 	return newframe( $a, $q, $w );
 }
 
+/* This is dedicated to the C-Drive Internet Cafe. */
 class tgc_generic {
 	public $path, $env;
 	function __construct($path,$env) {
@@ -172,7 +173,7 @@ class tgc_generic {
 			if ($end) return 1;
 			$a = $this->path . "/" . $w->getAttribute('path');
 			$m = load_eggsgml_file_env( $this->env, $a );
-			if( dirname($a,1) != $this->path ) {
+			if( !attribute_exists($w,'interim-no-relative') && dirname($a,1) != $this->path ) {
 				$this->NF = newframe( new tgc_generic(dirname($a,1),$this->env), $q, $m );
 			} else {
 				$this->NF = newframe(new tgc,$q,$m);
