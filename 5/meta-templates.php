@@ -141,7 +141,7 @@ class tgc_templates {
 			}
 			$env->file_ext = $w->getAttribute('extension');
 			if( ! check_shipyard_auth($path) ) {
-				$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path .'/shipyard', '/shipyard');
+				$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . attribute_with_inival( $w, 'shipyard-doc', '/shipyard'), '/shipyard');
 				if( ! $this->NF ) return 0;
 				return 3; }
 			if( $_GET['t'] == '/' ) {
