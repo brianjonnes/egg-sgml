@@ -21,8 +21,9 @@ class environ {
 	public $api, $nodoctype;
 	public $interimjsupgrade;
 	function __construct() {
-		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1 ];
+		$this->sct = [ 'br' => 1, 'hr' => 1, 'img' => 1, 'meta' => 1, 'link' => 1, 'input' => 1, 'base' => 1 ];
 		$this->scriptnow = time();
+		$this->clips = [ ];
 	}
 	function write_end_of_tag( $q, $tag ) {
 		if( array_key_exists( strtolower($tag), $this->sct ) ) {
@@ -33,7 +34,17 @@ class environ {
 	}
 	function write_close_tag( $q, $tag ) {
 		if( ! array_key_exists( strtolower($tag), $this->sct ) ) {
-			$q->write('</' . $w->tag . '>'); }
+			$q->write('</' . $tag . '>'); }
+	}
+	function dirpath2web( $P, $H ) {
+		$a = $_SERVER['DOCUMENT_ROOT'];
+		if( $H == '' ) {
+		} else if( $H[0] == '/' ) return $H;
+		if( $P == $a ) return '/' . $H;
+		if( substr($P,0,strlen($a)+1) != $a . '/' ) return $P;
+		$a = substr($P,strlen($a));
+		if( $H != '' ) if( $a[strlen($a)-1] != '/' ) $a .= '/' . $H;
+		return $a;
 	}
 	function _untested__write_prefixed_attributes( $q, $w, $f ) {
 		$m = 00;
@@ -130,7 +141,7 @@ class tgc_templates {
 			$env->nodoctype = attribute_exists( $w, 'no-doctype' );
 			$env->api = basename(dirname($_SERVER['PHP_SELF']));
 			$env->shipyard = file_exists( $path . '/shipyard.txt' );
-			$env->interimjsupgrade = attribute_exists( $w, 'interim-js-cdata' );
+			$env->interimjsupgrade = true;
 			if( $env->shipyard ) {
 				$env->shipyard_auth = file_get_contents($path . '/shipyard.txt'); }
 			while( attribute_exists( $w, "redirect-to-ssl" ) ) {

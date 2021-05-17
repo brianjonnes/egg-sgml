@@ -94,7 +94,6 @@ class tgc_generic {
 	function __construct($path,$env) {
 		$this->path = $path;
 		$this->env = $env;
-		$this->clips = [ ];
 	}
 	function start( $q ) {
 		return 0; }
@@ -103,7 +102,7 @@ class tgc_generic {
 	function consume_text( $q, $x ) {
 		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
-		$m = $f = $a = 00;
+		$m = $c = $f = $a = 00;
 		# local $m, $f
 		if( $w->nodeName == 'cache_control' ) {
 			return 1; }
@@ -143,7 +142,9 @@ class tgc_generic {
 				$q->write('</a>');
 				return 1; }
 			$q->write('<a');
-			if( $w->getAttribute('href') == $this->env->self_href ) {
+			$c = $w->getAttribute('href');
+			$c = $this->env->dirpath2web($this->path,$c); 
+			if( $c == $this->env->self_href ) {
 				$f = strmerge( $w->getAttribute('activeclass'), $w->getAttribute('class'), ' ' );
 			} else {
 				$f = $w->getAttribute('class');
@@ -151,14 +152,16 @@ class tgc_generic {
 			if( $f != '' ) {
 				$q->write(' class="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $f ) ) . '"' );
 			}
-			for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
-				if( $w->attributes->item($m)->name == 'activeclass' ) {
-				} else {
-					$q->write(' ' . $w->attributes->item($m)->name);
-					if( $w->attributes->item($m)->value != null ) {
-						$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
-				}
-			}
+			write_attributes( $q, $w, [ 'class', 'activeclass', 'href' ] );
+			$q->write(' href="' . sr_amp_quot( $c ) . '"' );
+		//	for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
+		//		if( $w->attributes->item($m)->name == 'activeclass' ) {
+		//		} else {
+		//			$q->write(' ' . $w->attributes->item($m)->name);
+		//			if( $w->attributes->item($m)->value != null ) {
+		//				$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
+		//		}
+		//	}
 			$q->write('>');
 			return 2; }
 		if( $w->nodeName == 'module' ) {
@@ -171,7 +174,11 @@ class tgc_generic {
 			return 3; }
 		if( $w->nodeName == 'include' ) {
 			if ($end) return 1;
-			$a = $this->path . "/" . $w->getAttribute('path');
+			$a = $this->path;
+			if( strlen($a) > 0 ) if( $a[strlen($a)-1] != '/' ) $a .= '/';
+			$b = $w->getAttribute('path');
+			if( strlen($b) > 0 ) if( $b[0] == '/' ) $b = substr($b,1);
+			$a .= $b;
 			$m = load_eggsgml_file_env( $this->env, $a );
 			if( !attribute_exists($w,'interim-no-relative') && dirname($a,1) != $this->path ) {
 				$this->NF = newframe( new tgc_generic(dirname($a,1),$this->env), $q, $m );
@@ -195,12 +202,13 @@ class tgc_generic {
 			return 1; }
 		if( $w->nodeName == 'record' ) {
 			if ($end) return 1;
-			$this->clips[$w->getAttribute('id')] = $w;
+			$this->env->clips[$w->getAttribute('id')] = $w;
+			$this->env->clip_path[$w->getAttribute('id')] = $this->path;
 			return 1; }
 		if( $w->nodeName == 'play' ) {
 			if ($end) return 1;
-			if( array_key_exists( $w->getAttribute('id'), $this->clips ) ) {
-				$this->NF = newframe(new tgc,$q,$this->clips[$w->getAttribute('id')]);
+			if( array_key_exists( $w->getAttribute('id'), $this->env->clips ) ) {
+				$this->NF = newframe(new tgc_generic($this->env->clip_path[$w->getAttribute('id')],$this->env),$q,$this->env->clips[$w->getAttribute('id')]);
 				return 3; }
 			return 1; }
 		if( $w->nodeName == 'servervariable' ) {
@@ -226,8 +234,7 @@ class tgc_generic {
 			$q->write('</script>');
 			return 1; }
 		if( $end ) {
-			if( $w->firstChild != null && ! array_key_exists( strtolower($w->nodeName), $this->env->sct ) ) {
-				$q->write('</' . $w->nodeName . '>'); }
+			$this->env->write_close_tag($q,$w->nodeName);
 			return 1; }
 		$q->write('<' . $w->nodeName);
 		if( $w->attributes ) for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
@@ -235,14 +242,7 @@ class tgc_generic {
 			if( $w->attributes->item($m)->value != null ) {
 				$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
 		}
-		if( $w->firstChild == null ) {
-			if( array_key_exists( strtolower($w->nodeName), $this->env->sct ) ) {
-				$q->write('/>');
-			} else {
-				$q->write('></' . $w->nodeName . '>');
-			}
-		} else {
-			$q->write('>'); }
+		$this->env->write_end_of_tag($q,$w->nodeName);
 		return 2; }
 }
 ?>

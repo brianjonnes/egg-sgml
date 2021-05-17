@@ -1,0 +1,42 @@
+<cache_control static/><include path="header_footer.ml"/><record id="title">Delving into Egg-SGML</record><record id="content">
+<!--div class="w3-container w3-theme-l5">
+
+
+</div-->
+<div class="source"><!--div class="tweakA"/--><div class="w3-container w3-theme-l5"><showsource path="explanation.xgml" highlight="record play include showsource"/></div><div class="tweakB"/></div>
+<div class="w3-container w3-theme-l5">
+
+<p> For convenient reference, we repeat the index webdoc [start.ml]:</p>
+</div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="start.ml" highlight="record play include"/></div><div class="tweakB"/></div>
+<div class="w3-container w3-theme-l5">
+<p>[header_footer.ml]:</p>
+
+</div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="header_footer.ml" highlight="record play include showsource a.site"/></div><div class="tweakB"/></div>
+
+<!--
+<div class="w3-container w3-theme-l5">
+<p>[nav.ml]:</p>
+
+</div>
+<div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5"><showsource path="nav.ml" highlight="record play include showsource"/></div><!- -div class="tweakB"/- -></div>
+
+<div class="w3-container w3-theme-l5">
+
+<p> Here you will find &lt;play> tags corresponding to the &lt;record> tags seen earlier. Further &lt;include> tags have been used here to reduce the length of this page; the remaining source files are given <a href="/remainder">here</a>. </p>
+</div-->
+<!--
+	The following server-processed tags are used here:
+<h4>record, play</h4>
+These tags work in conjunction: "record" stores the tree below that tag (called a clip) in an associative array, using the "id" attribute as the key (no output occurs). The tag "play" then attaches the corresponding subtree for processing as if it were included at that point. In these samples the "content" and "title" clips are used. Both are recorded in the individual pages, and played in the header_footer.include theme. <p/>
+<h5>include</h5>
+This tag simply attaches the document tree found in the referred file ("path" attribute) as if it were part of the overall document tree.
+<h2>showsource</h2>
+Outputs a formatted version of an Egg-SGML document. This makes use of the tag consumer stack.
+<h2>a.site</h2>
+Highlights a link with a given css class if the page is active.
+<h4>tag</h4>
+This tag does nothing except to satisfy the PHP XML parser of one root per document.
+-->
+</record><play id='header_footer'/>

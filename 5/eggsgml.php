@@ -60,6 +60,16 @@ function sr_amp_quot( $x ) {
 	return str_replace('"','&quot;', str_replace( '&', '&amp;', $x ) );
 }
 
+function sr_25( $x, $k ) {
+	$d = 00; $n = '';
+	for( $d = 0; $d < strlen($x); $d += 1 ) {
+		if( $x[$d] == '%' || strpos($k,$x[$d]) !== false ) {
+			$n .= '%' . str_pad( dechex(ord($x[$d])), 2, '0', STR_PAD_LEFT );
+		} else $n .= $x[$d];
+	}
+	return $n;
+}
+
 function write_attributes( $q, $w, $f ) {
 	$m = 00;
 	for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
