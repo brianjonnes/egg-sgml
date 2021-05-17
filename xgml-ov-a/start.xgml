@@ -6,7 +6,7 @@
 
 </div>
 <div class="source"><div class="tweakA"/><div class="w3-container w3-theme-l5">
-<showsource path="start.ml" highlight="record play include showsource"/></div><!--div class="tweakB"/--></div>
+<showsource path="start.xgml" highlight="record play include showsource"/></div><!--div class="tweakB"/--></div>
 <div class="w3-container w3-theme-l5">
 
 <!--p>The tags <u>showsource</u>, <u>record</u>, and <u>include</u> will be described after contrasting this page with <a href="/explanation">the explanation</a>.</p-->
