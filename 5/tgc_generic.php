@@ -181,7 +181,7 @@ class tgc_generic {
 			$a .= $b;
 			$m = load_eggsgml_file_env( $this->env, $a );
 			if( !attribute_exists($w,'interim-no-relative') && dirname($a,1) != $this->path ) {
-				$this->NF = newframe( new tgc_generic(dirname($a,1),$this->env), $q, $m );
+				$this->NF = newframe( new tgc_generic_but(dirname($a,1),$this->env), $q, $m );
 			} else {
 				$this->NF = newframe(new tgc,$q,$m);
 			}
@@ -208,7 +208,7 @@ class tgc_generic {
 		if( $w->nodeName == 'play' ) {
 			if ($end) return 1;
 			if( array_key_exists( $w->getAttribute('id'), $this->env->clips ) ) {
-				$this->NF = newframe(new tgc_generic($this->env->clip_path[$w->getAttribute('id')],$this->env),$q,$this->env->clips[$w->getAttribute('id')]);
+				$this->NF = newframe(new tgc_generic_but($this->env->clip_path[$w->getAttribute('id')],$this->env),$q,$this->env->clips[$w->getAttribute('id')]);
 				return 3; }
 			return 1; }
 		if( $w->nodeName == 'servervariable' ) {
@@ -244,5 +244,118 @@ class tgc_generic {
 		}
 		$this->env->write_end_of_tag($q,$w->nodeName);
 		return 2; }
+}
+/* This is dedicated to a person who was at the awkward age which makes us uncertain whether to refer
+ * to her as a girl or a woman, who didn't have enough sense to tell a boy who had intended to grow his 
+ * hair long but found it always in his face, to learn to tie a shoelace behind his head. */
+class tgc_generic_excuse_me {
+	public $path, $env;
+	function __construct($path,$env) {
+		$this->path = $path;
+		$this->env = $env;
+	}
+	function start( $q ) {
+		return 0; }
+	function repeat( $q ) {
+		return 0; }
+	function consume_text( $q, $x ) {
+		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
+	function consume( $q, $end, $w ) {
+		if( $w->nodeName == 'play' ) {
+			if ($end) return 1;
+			if( array_key_exists( $w->getAttribute('id'), $this->env->clips ) ) {
+				$this->NF = newframe(new tgc_generic_but($this->env->clip_path[$w->getAttribute('id')],$this->env),$q,$this->env->clips[$w->getAttribute('id')]);
+				return 3; }
+			return 1; }
+		return 0; }
+}
+
+class tgc_generic_but {
+	public $path, $env;
+	public $NF;
+	function __construct($path,$env) {
+		$this->path = $path;
+		$this->env = $env;
+	}
+	function start( $q ) {
+		return 0; }
+	function repeat( $q ) {
+		return 0; }
+	function consume_text( $q, $x ) {
+		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
+	function consume( $q, $end, $w ) {
+		$m = $c = $f = $a = 00;
+		# local $m, $f
+		if( $w->nodeName == 'a.site' ) {
+			if( $end ) {
+				$q->write('</a>');
+				return 1; }
+			$q->write('<a');
+			$c = $w->getAttribute('href');
+			$c = $this->env->dirpath2web($this->path,$c); 
+			if( $c == $this->env->self_href ) {
+				$f = strmerge( $w->getAttribute('activeclass'), $w->getAttribute('class'), ' ' );
+			} else {
+				$f = $w->getAttribute('class');
+			}
+			if( $f != '' ) {
+				$q->write(' class="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $f ) ) . '"' );
+			}
+			write_attributes( $q, $w, [ 'class', 'activeclass', 'href' ] );
+			$q->write(' href="' . sr_amp_quot( $c ) . '"' );
+		//	for( $m = 0; $m < $w->attributes->length; $m += 1 ) {
+		//		if( $w->attributes->item($m)->name == 'activeclass' ) {
+		//		} else {
+		//			$q->write(' ' . $w->attributes->item($m)->name);
+		//			if( $w->attributes->item($m)->value != null ) {
+		//				$q->write('="' . str_replace('"',"&quot;", str_replace( "&", "&amp;", $w->attributes->item($m)->value ) ) . '"' ); }
+		//		}
+		//	}
+			$q->write('>');
+			return 2; }
+		if( $w->nodeName == 'module' ) {
+			if ($end) return 1;
+			if( attribute_exists( $w, 'api' ) ) {
+				$this->NF = load_module_frame_api($this->path,$this->env,$w,$q);
+			} else {
+				$this->NF = load_module_frame($this->path,$this->env,$w,$q);
+			}
+			return 3; }
+		if( $w->nodeName == 'include' ) {
+			if ($end) return 1;
+			$a = $this->path;
+			if( strlen($a) > 0 ) if( $a[strlen($a)-1] != '/' ) $a .= '/';
+			$b = $w->getAttribute('path');
+			if( strlen($b) > 0 ) if( $b[0] == '/' ) $b = substr($b,1);
+			$a .= $b;
+			$m = load_eggsgml_file_env( $this->env, $a );
+			if( !attribute_exists($w,'interim-no-relative') && dirname($a,1) != $this->path ) {
+				$this->NF = newframe( new tgc_generic_but(dirname($a,1),$this->env), $q, $m );
+			} else {
+				$this->NF = newframe(new tgc,$q,$m);
+			}
+			return 3; }
+		if( $w->nodeName == 'showsource' ) {
+			if ($end) return 1;
+			$m = load_eggsgml_file_env( $this->env, $this->path . "/" . $w->getAttribute('path') );
+			$this->NF = newframe(new tgc_sgml_source($w->getAttribute('highlight')),$q,$m);
+			return 3; }
+		if( $w->nodeName == 'showphp' ) {
+			if ($end) return 1;
+			$m = file_get_contents($this->path . "/" . $w->getAttribute('path'));
+			$q->write(str_replace("\n", "<br/>", str_replace("\t", "&nbsp; &nbsp; &nbsp; ", str_replace("<","&lt;", str_replace( "&", "&amp;", $m ) ) ) ) );
+			return 2; }
+		if( $w->nodeName == 'record' ) {
+			if ($end) return 1;
+			$this->env->clips[$w->getAttribute('id')] = $w;
+			$this->env->clip_path[$w->getAttribute('id')] = $this->path;
+			return 1; }
+		if( $w->nodeName == 'play' ) {
+			if ($end) return 1;
+			if( array_key_exists( $w->getAttribute('id'), $this->env->clips ) ) {
+				$this->NF = newframe(new tgc_generic_but($this->env->clip_path[$w->getAttribute('id')],$this->env),$q,$this->env->clips[$w->getAttribute('id')]);
+				return 3; }
+			return 1; }
+		return 0; }
 }
 ?>
