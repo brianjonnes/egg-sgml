@@ -26,6 +26,13 @@ class dev_null {
 	}
 }
 
+class buffer_out {
+	public $a;
+	function write($b) {
+		$this->a .= $b;
+	}
+}
+
 function newframe($c,$q,$T) {
 	$NF = new frame();
 	$NF->T = $T;

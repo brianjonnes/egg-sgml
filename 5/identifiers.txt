@@ -27,7 +27,7 @@ tgc_generic
 tgc_templates
 	main
 		sts-expire, redirect-to-ssl, rootdoc, extension, extension-optional, no-doctype
-		-interim-js-cdata
+		-interim-js-cdata alt-extension(interim)
 
 Other Classes
 

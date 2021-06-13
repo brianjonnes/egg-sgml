@@ -6,8 +6,8 @@
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, version 3 of the License.
 
-#    Egg-SGML is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    Egg-SGML is distributed
+#    WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 
@@ -61,7 +61,7 @@ class environ {
 	}
 };
 
-function main_f($env,$extension,$extoptional,$doc,$self_href) {
+function main_f($env,$extension,$altextension,$extoptional,$doc,$self_href) {
 	$c = $d = $m = null; $b = 0;
 	$env->self_href = $self_href;
 	do {
@@ -69,6 +69,10 @@ function main_f($env,$extension,$extoptional,$doc,$self_href) {
 			if( file_exists( $doc . $extension ) ) {
 				$env->templatefile = $doc . $extension;
 				break; }
+			if( $altextension != '' ) {
+				if( file_exists( $doc . $altextension ) ) {
+					$env->templatefile = $doc . $altextension;
+					break; } }
 			if( ! $extoptional ) {
 F:				if( $env->fallback != '' ) {
 					$env->templatefile = $_SERVER['DOCUMENT_ROOT'] . $env->fallback . $extension; 
@@ -156,11 +160,11 @@ class tgc_templates {
 			}
 			$env->file_ext = $w->getAttribute('extension');
 			if( ! check_shipyard_auth($path) ) {
-				$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . attribute_with_inival( $w, 'shipyard-doc', '/shipyard'), '/shipyard');
+				$this->NF = main_f( $env, $w->getAttribute('extension'), $w->getAttribute('alt-extension'), attribute_exists($w,'extension-optional'), $path . attribute_with_inival( $w, 'shipyard-doc', '/shipyard'), '/shipyard');
 				if( ! $this->NF ) return 0;
 				return 3; }
 			if( $_GET['t'] == '/' ) {
-				$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . '/' . $w->getAttribute('rootdoc'), $_GET['t'] );
+				$this->NF = main_f( $env, $w->getAttribute('extension'), $w->getAttribute('alt-extension'), attribute_exists($w,'extension-optional'), $path . '/' . $w->getAttribute('rootdoc'), $_GET['t'] );
 				if( ! $this->NF ) return 0;
 				return 3;
 			}
@@ -168,7 +172,7 @@ class tgc_templates {
 				header('Location:https://' . $_SERVER['HTTP_HOST'] . '/' );
 				return 1;
 			}
-			$this->NF = main_f( $env, $w->getAttribute('extension'), attribute_exists($w,'extension-optional'), $path . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );
+			$this->NF = main_f( $env, $w->getAttribute('extension'), $w->getAttribute('alt-extension'), attribute_exists($w,'extension-optional'), $path . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );
 			if( ! $this->NF ) return 0;
 			return 3;
 		}
