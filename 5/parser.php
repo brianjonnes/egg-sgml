@@ -362,7 +362,7 @@ class eggsgml_parser {
 					$this->T->text( '<' );
 					$c += 1;
 				} else if( $m[$c] == '&' ) {
-					$this->T->text( '&' );
+					$this->T->text( '<' );
 					$c += 1;
 					$this->w = 1;
 				} else {
