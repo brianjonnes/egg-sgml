@@ -1,0 +1,25 @@
+It is annoying when you think about publishing something which
+you've spent a lot of time thinking about and find it necessary
+to think about people who aught to be mentioned because while our
+parents only encourage us, it are those who cross our paths
+who have no reason to give us their support who give us a pointer
+here and there as to how we're within the cot of our parents'
+way of thinking which is only going to give us their praise,
+which comes to us no matter what we do.
+
+It's a lot more annoying when we find that a person we'd like to
+dedicate something to is not someone that we think anyone knows
+as we do.
+
+This project was started simply enough, as anyone knows how
+a project might start. But there was no grounding. Thus it took
+eleven years for me to realize that I needed to make an HTML
+parser in a scripting language.
+
+This is not very efficient, but those who wrote parsers that
+we could use tended to think that the SGML specification was
+not good enough. I certainly did, myself; for it seems to be just
+a suggestion.
+
+Thus I leave this in the same vein, while my dad tries to worry me
+to death with his.
