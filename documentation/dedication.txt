@@ -1,25 +1,16 @@
-It is annoying when you think about publishing something which
-you've spent a lot of time thinking about and find it necessary
-to think about people who aught to be mentioned because while our
-parents only encourage us, it are those who cross our paths
-who have no reason to give us their support who give us a pointer
-here and there as to how we're within the cot of our parents'
-way of thinking which is only going to give us their praise,
-which comes to us no matter what we do.
+Egg-SGML was started as any project starts.  But it took me eleven 
+years to realize that I needed to make an HTML parser in a 
+scripting language.
 
-It's a lot more annoying when we find that a person we'd like to
-dedicate something to is not someone that we think anyone knows
-as we do.
+This is not very efficient. But we need to take it as axiomatic
+that dynamic websites cannot be built with a compiled 
+language. This is not easy for one who at least knows what an 
+axiom is not.
 
-This project was started simply enough, as anyone knows how
-a project might start. But there was no grounding. Thus it took
-eleven years for me to realize that I needed to make an HTML
-parser in a scripting language.
+SGML is a specification which to one who believes that 
+communication without words can only communicate what animals
+can communicate without words, is perplexing. This was certainly 
+a hurdle which compounded with the aforementioned.
 
-This is not very efficient, but those who wrote parsers that
-we could use tended to think that the SGML specification was
-not good enough. I certainly did, myself; for it seems to be just
-a suggestion.
+Thanks a lot for your support, mothers and daughters everywhere.
 
-Thus I leave this in the same vein, while my dad tries to worry me
-to death with his.
