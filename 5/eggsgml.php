@@ -87,15 +87,8 @@ function write_attributes( $q, $w, $f ) {
 		}
 	}
 }
-// We discover, by accident as it were, that Brian's way of getting the job done is best.
-// If one knows how to get it done, it does not do to refer to the documentation to see if there
-// is a smpler way of doing it.
-// We end up drawing circles on the walls, looking into mirrors, reading dusty old books, and 
 function attribute_with_inival( $w, $N, $initial ) {
-// the subroutine remains in the above state until we finally have to revert the changes.
 		if( attribute_exists( $w, $N ) ) {
-//		if( attribute_exists( $w, $N ) {
-//	We include the mistake that has to get corrected all too often - not being careful enough with brackets.
 			return $w->getAttribute($N); }
 // At this point, the coder thinks to themselves, is this the best way to proceed?
 		return $initial;
