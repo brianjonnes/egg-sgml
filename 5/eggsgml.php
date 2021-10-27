@@ -95,11 +95,10 @@ function attribute_with_inival( $w, $N, $initial ) {
 // It'll do for now, I suppose.
 }
 
-if(PHP_VERSION_ID < 72000 ) {
-  function mb_chr($j) {
+if(PHP_VERSION_ID < 70400 ) {
+  function mb_chr($j) { /* Documentation indicates this should be in 7.2 */
 	return html_entity_decode('&#'.$j.';'); }
 }
-
 
 function eggsgml($F) {
 	$x = $F->T->firstChild;
