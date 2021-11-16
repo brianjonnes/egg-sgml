@@ -131,7 +131,10 @@ class tgc_generic {
 			return 1; }
 		if( $w->nodeName == 'eggsgml_version' ) {
 			if( $end ) return 1;
-			$q->write( sr_amp_lt( eggsgml_version() ) );
+			$c = eggsgml_version();
+			if( attribute_exists( $w, 'decimal' ) )
+				$c = str_replace( '.', $w->getAttribute('decimal'), $c );
+			$q->write( sr_amp_lt( $c ) );
 			return 2; }
 		if( $w->nodeName == 'eggsgml_api_version' ) {
 			if( $end ) return 1;
