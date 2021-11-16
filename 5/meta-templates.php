@@ -117,9 +117,9 @@ function attribute_exists( $w, $n ) {
 	return false;
 }
 
-function check_shipyard_auth($u) {
-	if( ! file_exists($u . "/shipyard.txt") ) return true;
-	$m = file_get_contents($u . '/shipyard.txt');
+function check_shipyard_auth($env,$u) {
+	if( ! $env->shipyard ) return true;
+	$m = $env->shipyard_auth;
 	if( $m === false ) return true;
 	if( array_key_exists( 'shipyard', $_COOKIE ) ) {
 		if( $_COOKIE['shipyard'] === $m ) {
@@ -147,10 +147,14 @@ class tgc_templates {
 			$env->urlpath = $_GET['t'];
 			$env->nodoctype = attribute_exists( $w, 'no-doctype' );
 			$env->api = basename(dirname($_SERVER['PHP_SELF']));
-			$env->shipyard = file_exists( $path . '/shipyard.txt' );
 			$env->interimjsupgrade = true;
-			if( $env->shipyard ) {
-				$env->shipyard_auth = file_get_contents($path . '/shipyard.txt'); }
+			if( file_exists( $path . '/shipyard.txt' ) ) {
+				if( attribute_exists( $w, 'shipyard-auth' ) ) {
+					$env->shipyard_auth = $w->getAttribute('shipyard-auth');
+				} else {
+					$env->shipyard_auth = file_get_contents($path . '/shipyard.txt');
+				}
+				$env->shipyard = true; }
 			$env->fallback = $w->getAttribute('fallback');
 			while( attribute_exists( $w, "redirect-to-ssl" ) ) {
 				if( array_key_exists('HTTPS',$_SERVER) )
@@ -159,7 +163,7 @@ class tgc_templates {
 				return 1; 
 			}
 			$env->file_ext = $w->getAttribute('extension');
-			if( ! check_shipyard_auth($path) ) {
+			if( ! check_shipyard_auth($env,$path) ) {
 				$this->NF = main_f( $env, $w->getAttribute('extension'), $w->getAttribute('alt-extension'), attribute_exists($w,'extension-optional'), $path . attribute_with_inival( $w, 'shipyard-doc', '/shipyard'), '/shipyard');
 				if( ! $this->NF ) return 0;
 				return 3; }
