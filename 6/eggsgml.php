@@ -71,6 +71,17 @@ class subrootegg {
 	}
 };
 
+class module1egg {
+	public $tsq, $tsr;
+	public $writernode;
+	public $tgc;
+	function write($a) {
+		if( $this->writernode ) $this->writernode->q->write($a);
+	}
+	function do( $env, $tsr ) {
+	}
+};
+
 class domegg {
 	public $tsq, $tsr;
 	public $writernode;
@@ -99,10 +110,6 @@ class domegg {
 				$a = $this->tgcnode;
 				do switch( $a->tgc->consume( $env, true, $this->dn ) ) {
 				case 0: 
-					if( $a == $a->tgcnode ) {
-						$env->unhandled_tag( $this->dn );
-						return;
-					}
 					$a = $a->tgcnode;
 					if( $a == null ) {
 						$env->unhandled_tag( $this->dn );
@@ -121,10 +128,6 @@ class domegg {
 			$a = $this->tgcnode;
 			while(1) switch( $a->tgc->consume( $env, false, $this->dn ) ) {
 			case 0:
-				if( $a == $a->tgcnode ) {
-					$env->unhandled_tag( $this->dn );
-					return;
-				}
 				$a = $a->tgcnode;
 				if( $a == null ) {
 					$env->unhandled_tag( $this->dn );
@@ -206,13 +209,16 @@ function eggsgml_2( $env ) {
 }
 
 function eggsgml( $F ) {
+	$c = null;
 	$env = new env();
-	$env->stack = new domegg;
-	$env->stack->tgc = $F->c;
-	$env->stack->tgcnode = $env->stack;
-	$env->stack->dn = $F->T;
-	$env->stack->q = $F->q;
-	$env->repeat = false;
+	$c = new module1egg;
+	$c->tgc = $F->c;
+	$env->enqueue( $c, 0 );
+	$c = new domegg;
+	$c->tgcnode = $env->stack;
+	$c->dn = $F->T;
+	$c->q = $F->q;
+	$env->enqueue( $c, 0 );
 	eggsgml_2( $env );
 }
 

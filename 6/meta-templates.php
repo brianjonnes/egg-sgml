@@ -147,7 +147,7 @@ class tgc_templates {
 			$env = new environ;
 			$env->secrets_path = $w->getAttribute('secrets-path');
 			$env->urlpath = $_GET['t'];
-			$env->nodoctype = attribute_exists( $w, 'no-doctype' );
+			$env->nodoctype = true;
 			$env->api = basename(dirname($_SERVER['PHP_SELF']));
 			$env->interimjsupgrade = true;
 			if( file_exists( $path . '/shipyard.txt' ) ) {

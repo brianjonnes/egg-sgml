@@ -1,3 +1,6 @@
+Change from 5
+ - remove no-doctype
+
 Tag Consumer classes
 
 tgc
@@ -26,8 +29,8 @@ tgc_generic
 	shipyard_login_failed
 tgc_templates
 	main
-		sts-expire, redirect-to-ssl, rootdoc, extension, extension-optional, no-doctype
-		-interim-js-cdata alt-extension(interim)
+		sts-expire, redirect-to-ssl, rootdoc, extension, extension-optional
+		alt-extension(interim)
 
 Other Classes
 
@@ -42,14 +45,14 @@ W3CDOM_tagreceiver
 eggsgml_parser
 
 
-Functions
+Subroutines
 
 load_module_frame
 load_module_frame_api
 newframe
 sr_amp_lt
 sr_amp_quot
-+sr_25
+sr_25
 write_attributes
 eggsgml
 eggsgml_descendent
