@@ -44,15 +44,15 @@ class egg {
 	}
 };
 
-class subrootegg {
+class subrootdomegg {
 	public $tsq, $tsr;
 	public $writernode;
 	public $tgcnode, $dn;
 	function write($a) {
 		if( $this->writernode ) $this->writernode->q->write($a);
 	}
-	function do( $env, $tsr ) {
-		if( $tsr ) {
+	function do( $env, $str ) {
+		if( $str ) {
 			if( $this->tgcnode->tgc->repeat( $env ) ) {
 			} else return;
 		} else {
@@ -79,7 +79,7 @@ class module1egg {
 	function write($a) {
 		if( $this->writernode ) $this->writernode->q->write($a);
 	}
-	function do( $env, $tsr ) {
+	function do( $env, $str ) {
 	}
 };
 
@@ -138,7 +138,7 @@ class domegg {
 			case 1: goto _1;
 			case 2: goto _2;
 			case 3: default: 
-				$d = new subrootegg;
+				$d = new subrootdomegg;
 				$this->tgc = $a->tgc->NF->c;
 				$d->tgcnode = $this;
 				$d->dn = $a->tgc->NF->T;
@@ -150,6 +150,9 @@ class domegg {
 				}
 
 				$env->enqueue( $d, 0 );
+				return;
+			case 4:
+				$env->enqueue( $a->tgc->NF, 0 );
 				return;
 			}
 		}
