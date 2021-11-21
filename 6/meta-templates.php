@@ -133,6 +133,11 @@ function check_shipyard_auth($env,$u) {
 
 class tgc_templates {
 	public $NF;
+	function self_protocol($w) {
+		if( attribute_exists( $w, "redirect-to-ssl" ) || array_key_exists('HTTPS',$_SERVER) ) {
+			return 'https'; }
+		return 'http';
+	}
 	function start( $q ) {
 		return 0; }
 	function repeat( $q ) {
@@ -175,7 +180,7 @@ class tgc_templates {
 				return 3;
 			}
 			if( $_GET['t'] == '/' . $w->getAttribute('rootdoc') ) {
-				header('Location:https://' . $_SERVER['HTTP_HOST'] . '/' );
+				header('Location:' . $this->self_protocol($w) . '://' . $_SERVER['HTTP_HOST'] . '/' );
 				return 1;
 			}
 			$this->NF = main_f( $env, $w->getAttribute('extension'), $w->getAttribute('alt-extension'), attribute_exists($w,'extension-optional'), $path . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );

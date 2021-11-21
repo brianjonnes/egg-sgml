@@ -40,7 +40,7 @@ class egg {
 	function write($a) {
 		if( $this->writernode ) $this->writernode->q->write($a); 
 	}
-	function do( $env, $tsr ) {
+	function tap( $env, $tsr ) {
 	}
 };
 
@@ -51,7 +51,7 @@ class subrootdomegg {
 	function write($a) {
 		if( $this->writernode ) $this->writernode->q->write($a);
 	}
-	function do( $env, $str ) {
+	function tap( $env, $str ) {
 		if( $str ) {
 			if( $this->tgcnode->tgc->repeat( $env ) ) {
 			} else return;
@@ -79,7 +79,7 @@ class module1egg {
 	function write($a) {
 		if( $this->writernode ) $this->writernode->q->write($a);
 	}
-	function do( $env, $str ) {
+	function tap( $env, $str ) {
 	}
 };
 
@@ -94,7 +94,7 @@ class domegg {
 	function write($r) { 
 		if( $this->writernode ) $this->writernode->q->write($r); 
 	}
-	function do( $env, $str ) {
+	function tap( $env, $str ) {
 		$w = 0; $b = $f = $a = $c = null;
 		switch( $this->dn->nodeType ) {
 		case 3:
@@ -103,7 +103,7 @@ class domegg {
 		case 9: 
 			if( $str ) {
 				return; }
-			goto _2;
+			goto _2b;
 		case 8:
 			break;
 		default:
@@ -138,6 +138,7 @@ class domegg {
 			case 1: goto _1;
 			case 2: goto _2;
 			case 3: default: 
+				$env->enqueue( $this, 1 );
 				$d = new subrootdomegg;
 				$this->tgc = $a->tgc->NF->c;
 				$d->tgcnode = $this;
@@ -161,14 +162,15 @@ class domegg {
 		$env->enqueue( $this, 1, 0 );
 		return;
 	_2:
-		$env->enqueue( $this, 1, 0 );
+		$env->enqueue( $this, 1 );
+	_2b:
 		for( $w = $this->dn->childNodes->length ; $w > 0 ; $w -= 1 ) {
 			$c = $this->dn->childNodes->item($w-1);
 			$a = new domegg;
 			$a->tgcnode = $this->tgcnode;
 			$a->dn = $c;
 			$a->writernode = $this->writernode;
-			$env->enqueue( $a, 0, 0 );
+			$env->enqueue( $a, 0 );
 		}
 		return;
 	_3:
@@ -183,7 +185,7 @@ class domegg {
 			$a = new domegg;
 			$a->tgcnode = $d;
 			$a->dn = $c;
-			$env->enqueue( $a, 0, 0 );
+			$env->enqueue( $a, 0 );
 		}
 		return;
 	_4:
@@ -208,7 +210,7 @@ function eggsgml_2( $env ) {
 		$env->repeat = $c->tsr;
 		$env->stack = $c->tsq;
 
-		$c->do( $env, $d );
+		$c->tap( $env, $d );
 	}
 }
 
@@ -311,6 +313,7 @@ function attribute_with_inival( $w, $N, $initial ) {
 
 if(PHP_VERSION_ID < 70400 ) {
   function mb_chr($j) { /* Documentation indicates this should be in 7.2 */
+	if($j==39) return '\'';
 	return html_entity_decode('&#'.$j.';'); }
 }
 
