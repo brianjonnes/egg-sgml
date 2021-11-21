@@ -73,7 +73,7 @@ class subrootdomegg {
 
 class module1egg {
 	public $tsq, $tsr;
-	public $writernode;
+	public $writernode, $tgcnode;
 	public $tgc;
 	public $q;
 	function write($a) {

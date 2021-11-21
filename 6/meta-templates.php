@@ -172,11 +172,11 @@ class tgc_templates {
 			$env->file_ext = $w->getAttribute('extension');
 			if( ! check_shipyard_auth($env,$path) ) {
 				$this->NF = main_f( $env, $w->getAttribute('extension'), $w->getAttribute('alt-extension'), attribute_exists($w,'extension-optional'), $path . attribute_with_inival( $w, 'shipyard-doc', '/shipyard'), '/shipyard');
-				if( ! $this->NF ) return 0;
+				if( ! $this->NF ) return 1;
 				return 3; }
 			if( $_GET['t'] == '/' ) {
 				$this->NF = main_f( $env, $w->getAttribute('extension'), $w->getAttribute('alt-extension'), attribute_exists($w,'extension-optional'), $path . '/' . $w->getAttribute('rootdoc'), $_GET['t'] );
-				if( ! $this->NF ) return 0;
+				if( ! $this->NF ) return 1;
 				return 3;
 			}
 			if( $_GET['t'] == '/' . $w->getAttribute('rootdoc') ) {
@@ -184,7 +184,7 @@ class tgc_templates {
 				return 1;
 			}
 			$this->NF = main_f( $env, $w->getAttribute('extension'), $w->getAttribute('alt-extension'), attribute_exists($w,'extension-optional'), $path . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );
-			if( ! $this->NF ) return 0;
+			if( ! $this->NF ) return 1;
 			return 3;
 		}
 		return 0;
