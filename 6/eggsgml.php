@@ -75,6 +75,7 @@ class module1egg {
 	public $tsq, $tsr;
 	public $writernode;
 	public $tgc;
+	public $q;
 	function write($a) {
 		if( $this->writernode ) $this->writernode->q->write($a);
 	}
@@ -213,11 +214,12 @@ function eggsgml( $F ) {
 	$env = new env();
 	$c = new module1egg;
 	$c->tgc = $F->c;
+	$c->q = $F->q;
 	$env->enqueue( $c, 0 );
 	$c = new domegg;
 	$c->tgcnode = $env->stack;
 	$c->dn = $F->T;
-	$c->q = $F->q;
+	$c->writernode = $env->stack;
 	$env->enqueue( $c, 0 );
 	eggsgml_2( $env );
 }
