@@ -311,7 +311,9 @@ function attribute_with_inival( $w, $N, $initial ) {
 // It'll do for now, I suppose.
 }
 
-if(PHP_VERSION_ID < 70400 ) {
+//NOT in 70331
+//FOUND in 70333
+if(PHP_VERSION_ID < 70333 ) {
   function mb_chr($j) { /* Documentation indicates this should be in 7.2 */
 	if($j==39) return '\'';
 	return html_entity_decode('&#'.$j.';'); }
