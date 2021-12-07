@@ -61,6 +61,35 @@ class libconfig {
 			return; }
 		return load_eggsgml_file( $path );
 	}
+	# I'm not about to take up knitting (so I can't stick to it),
+	# and I am averse to the using of medical terminology.
+	# Circuit tracing belongs to electronics.
+	# A debugger is an imposing tool, and in truth unless we create
+	# our own picture we're not likely to 
+	# increase our understanding.
+	#
+	# If the code belongs to us, we simply need to have more information
+	# about what it's doing in order to come to understand what it's
+	# doing wrong.  Some call the art of correcting others, 
+	# reductio ad absurdum, but the use of Latin lends itself to 
+	# the creating of (absurd) pictures of Ancient Rome, which
+	# is just about the opposite reason why Latin was the language
+	# of the sciences.
+	#
+	# Encouraging someone to talk who might've drawn a wrong conclusion
+	# somewhere, who had no way of knowing it, can only be done in
+	# good faith--which carries the draw-back of allowing ourselves
+	# to be persuaded not to argue.
+	#
+	# Don't talk, just fix!
+	#
+	# Commanding someone to talk to us is nonsensical, yet it
+	# is natural. Imagining a ship can talk to us, we would only 
+	# want it to keep us informed of things that need attending to, 
+	# while it is in the shipyard. Obviously.
+	#
+	# And obviously they call us by name.
+	#
 	public $shipyard_log;
 	function brian( $d ) {
 		if( ! $this->shipyard ) return;
