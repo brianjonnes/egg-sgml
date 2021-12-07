@@ -37,6 +37,14 @@ class libconfig {
 		if( ! array_key_exists( strtolower($tag), $this->sct ) ) {
 			$q->write('</' . $tag . '>'); }
 	}
+	function expanddirpath( $H ) {
+		if( $H == '' ) {
+			return $_SERVER['DOCUMENT_ROOT'] . '/'; }
+
+		if( $H[strlen($H)-1] != '/' ) $H .= '/';
+		if( $H[0] == '/' ) return $H;
+		return $_SERVER['DOCUMENT_ROOT'] . '/' . $H;
+	}
 	function dirpath2web( $P, $H ) {
 		$a = $_SERVER['DOCUMENT_ROOT'];
 		if( $H == '' ) {
@@ -46,6 +54,19 @@ class libconfig {
 		$a = substr($P,strlen($a));
 		if( $H != '' ) if( $a[strlen($a)-1] != '/' ) $a .= '/' . $H;
 		return $a;
+	}
+	function load_eggsgml_file( $path ) {
+		if( ! file_exists( $path ) ) {
+			$this->brian( 'not found: ' . $path );
+			return; }
+		return load_eggsgml_file( $path );
+	}
+	public $shipyard_log;
+	function brian( $d ) {
+		if( ! $this->shipyard ) return;
+		if( $this->shipyard_log != '' ) {
+			$this->shipyard_log .= ' / '; }
+		$this->shipyard_log .= $d;
 	}
 	function _untested__write_prefixed_attributes( $q, $w, $f ) {
 		$m = 00;
@@ -165,7 +186,7 @@ class tgc_templates {
 			if( $end ) return 1;
 			$path = $_SERVER['DOCUMENT_ROOT'];
 			$env = new libconfig;
-			$env->secrets_path = $w->getAttribute('secrets-path');
+			$env->secrets_path = $env->expanddirpath( $w->getAttribute('secrets-path') );
 			$env->urlpath = $_GET['t'];
 			$env->nodoctype = true;
 			$env->api = basename(dirname($_SERVER['PHP_SELF']));
