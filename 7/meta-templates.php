@@ -110,6 +110,12 @@ class libconfig {
 			}
 		}
 	}
+	function write( $d ) {
+		echo $d;
+	}
+	function speak( $d ) {
+		echo $d;
+	}
 };
 
 class docloader_egg {
@@ -164,8 +170,8 @@ n:		header('Last-Modified: ' . date('r',$this->env->scriptnow));
 	}
 	enqueue_modules( $eggenv, $this->doc, $this->env );
 	$k = new domegg;
-	$k->tgcnode = $eggenv->stack;
-	$k->writernode = ( $eggenv->stack->q ? $eggenv->stack : $eggenv->stack->writernode );
+	//$k->tgcnode = $eggenv->stack;
+	//$k->writernode = ( $eggenv->stack->q ? $eggenv->stack : $eggenv->stack->writernode );
 	$k->dn = $this->d;
 	$eggenv->enqueue( $k, 0 );
 
@@ -197,7 +203,10 @@ function check_shipyard_auth($env,$u) {
 }
 
 class tgc_templates {
-	public $NF;
+	public $NF; public $lc;
+	function __construct( $lc ) {
+		$this->lc = $lc;
+	}
 	function self_protocol($w) {
 		if( attribute_exists( $w, "redirect-to-ssl" ) || array_key_exists('HTTPS',$_SERVER) ) {
 			return 'https'; }
@@ -214,7 +223,8 @@ class tgc_templates {
 		if( $w->nodeName == 'main' ) {
 			if( $end ) return 1;
 			$path = $_SERVER['DOCUMENT_ROOT'];
-			$env = new libconfig;
+			//$env = new libconfig;
+			$env = $this->lc;
 			$env->secrets_path = $env->expanddirpath( $w->getAttribute('secrets-path') );
 			$env->urlpath = $_GET['t'];
 			$env->nodoctype = true;
@@ -257,15 +267,32 @@ class tgc_templates {
 };
 
 function main() {
+	$m = 00; //$F = null;
+	$c = null; $hen = null; $lc = null;
+
 	$m = $_SERVER['DOCUMENT_ROOT'];
 	if( file_exists( $m . '/templates_config.xml' ) ) {
 		$d = load_eggsgml_file( $m . '/templates_config.xml' );
 	} else {
 		$d = load_eggsgml_file( 'templates_config.xml' );
 	}
-	$k = newframe(new tgc_templates, new echo_out, $d);
-	$k->P = null;
-	eggsgml($k);
+	$lc = new libconfig;
+	//$F = newframe(new tgc_templates($lc), new echo_out, $d);
+	//$F->P = null;
+	//eggsgml($k);
+	$hen = new chicken();
+	$hen->libconfig = $lc;
+	$c = new consumeregg;
+	//$c = new module1egg;
+	$c->tgc = new tgc_templates($lc); //$F->c;
+	$c->q = new echo_out; //$F->q;
+	$hen->enqueue_idents( $c, [ 'tgc', 'hello' ] );
+	$c = new domegg;
+	//$c->tgcnode = $hen->stack;
+	$c->dn = $d; //$F->T;
+	//$c->writernode = $hen->stack;
+	$hen->enqueue( $c, 0 );
+	eggsgml_2( $hen );
 }
 
 main();
