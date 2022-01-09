@@ -17,88 +17,195 @@
 
 
 class chicken {
-	public $stack, $repeat;
+	public $libconfig;
+	public $stack, $repeat, $idents, $perfectbliss;
+	public $diplomats;
 
-	function enqueue( $egg, $repeat ) {
+	public $c;
+
+	function __construct( $lc ) {
+		$this->libconfig = $lc;
+		$this->diplomats = [ [ ] ];
+		$this->stack = null;
+	}
+
+	function talk_yourself_to_sleep() {
+		$h = null; $d = $y = 0;
+		while( $this->stack ) {
+			$this->c = $this->stack;
+			$d = $this->repeat;
+			$h = $this->idents;
+			$y = $this->perfectbliss;
+			$this->repeat = $this->c->tsr;
+			$this->stack = $this->c->tsq;
+			$this->idents = $this->c->tsidents;
+			$this->perfectbliss = $this->c->tsperfectbliss;
+			if( $y ) array_shift( $this->diplomats );
+			else if( $h ) $this->sane_unregister( $h );
+
+			$this->c->tap( $this, $d );
+		}
+	}
+
+	function diplomat( $m ) {
+		if( ! array_key_exists( $m, $this->diplomats[0] ) ) return null;
+		return $this->diplomats[0][$m][count($this->diplomats[0][$m])-1];
+	}
+	function sane_enqueue( $egg, $perfectbliss, $repeat, $idents ) {
 		$egg->tsq = $this->stack;
 		$egg->tsr = $this->repeat;
+		$egg->tsidents = $this->idents;
+		$egg->tsperfectbliss = $this->perfectbliss;
 		$this->stack = $egg;
 		$this->repeat = $repeat;
+		$this->idents = $idents;
+		$this->perfectbliss = $perfectbliss;
+		if( $perfectbliss ) { array_unshift( $this->diplomats, [ ] ); }
+		if( $idents ) $this->sane_register( $egg, $idents );
+	}
+	function enqueue_surreal( $egg, $idents ) {
+		$this->sane_enqueue( $egg, 0, $this->c == $egg, $idents );
+	}
+	function enqueue_perfectbliss( $egg, $idents ) {
+		$this->sane_enqueue( $egg, 1, 1, $idents );
 	}
 
 	function write( $a ) {
-		$this->stack->write($a);
+		$this->diplomat('earring')->write($a);
+		//$this->stack->write($a);
 	}
 	function unhandled_tag( $m ) {
 		echo( "unhandled tag". $m->nodeType. $m->nodeName );
 	}
+
+	function sane_register( $egg, $idents ) {
+		$j = null;
+		foreach( $idents as $j ) {
+			$this->diplomats[0][$j][] = $egg; }
+	}
+	function sane_unregister( $idents ) {
+		$j = null;
+		foreach( $idents as $j ) {
+			array_pop( $this->diplomats[0][$j] );
+		}
+	}
 };
 
-class egg {
-	public $tsq, $tsr, $tsw;
-	public $writernode;
-	function write($a) {
-		if( $this->writernode ) $this->writernode->q->write($a); 
+class sane_enqueue_result {
+	public $egg;
+};
+
+function sane_enqueue_subtree($env,$T,$path) {
+	$b = null; $h = null; $r = new sane_enqueue_result;
+	$c = $T->lastChild;
+	if ( $c == null ) 
+		return;
+	while (1) {
+		while (1) {
+			if( $c->nodeType == 1 ) if( array_key_exists( 'red-atom:' . $c->nodeName, $env->diplomats[0] ) ) {
+				$h = $env->diplomats[0]['red-atom:' . $c->nodeName];
+				switch( $h[count($h)-1]->enqueue( $r, $env->libconfig, $c, $path ) ) {
+				case 0: default: break;
+				case 1:
+					$env->enqueue_surreal( $r->egg, [ ] );
+					break;
+				case 2:
+					$env->enqueue_surreal( $r->egg, [ ] );
+					goto a;
+				case 3:
+					goto a;
+					//enqueue_subtree( $env, $c );
+				}
+				break;
+			}
+			$h = new tag_egg($c,$path);
+			//domegg;
+			//$h->dn = $c;
+			$env->enqueue_surreal( $h, [ ] );
+			break;
+		a:	$b = $c->lastChild;
+			if( $b != null ) {
+				$c = $b;
+			} else {
+				break; }
+		}
+		while (1) {
+			$b = $c->previousSibling;
+			if( $b != null ) {
+				$c = $b;
+				break; }
+			$b = $c->parentNode;
+			if( $b === $T ) {
+				return;
+			} else {
+				$c = $b;
+			}
+		}
 	}
+}
+
+class egg {
+	public $tsq, $tsr, $tsw, $tsidents, $tsperfectbliss;
 	function tap( $env, $tsr ) {
 	}
 };
 
-class subrootdomegg {
-	public $tsq, $tsr;
-	public $writernode;
-	public $tgcnode, $dn;
-	function write($a) {
-		if( $this->writernode ) $this->writernode->q->write($a);
-	}
+class tgc_tag_egg {
+	public $tsq, $tsr, $tsw, $tsidents, $tsperfectbliss;
+	public $dn, $path;
 	function tap( $env, $str ) {
 		if( $str ) {
-			if( $this->tgcnode->tgc->repeat( $env ) ) {
+			if( $env->diplomat('tgc')->tgc->repeat( $env ) ) {
 			} else return;
 		} else {
-			$this->tgcnode->tgc->start($env);
+			$env->diplomat('tgc')->tgc->start($env);
 		}
-		$env->enqueue( $this, 1 );
+		$env->enqueue_surreal( $this, [ ] );
+		sane_enqueue_subtree( $env, $this->dn, $this->path );
+		return;
 		for( $w = $this->dn->childNodes->length ; $w > 0 ; $w -= 1 ) {
 			$c = $this->dn->childNodes->item($w-1);
-			$a = new domegg;
-			$a->tgcnode = $this->tgcnode;
-			$a->dn = $c;
-			$a->writernode = $this->writernode;
-			$env->enqueue( $a, 0, 0 );
+			$a = new tag_egg($c,$this->path);
+			//$a->tgcnode = $this->tgcnode;
+			//$a->dn = $c;
+			//$a->writernode = $this->writernode;
+			$env->enqueue_surreal( $a, [ ] );
 		}
 		return;
 	}
 };
 
-class module1egg {
-	public $tsq, $tsr;
-	public $writernode, $tgcnode;
+class tgc_egg {
+	public $tsq, $tsr, $tsw, $tsidents, $tsperfectbliss;
 	public $tgc;
 	public $q;
+	function __construct($tgc) {
+		$this->tgc = $tgc; }
 	function write($a) {
-		if( $this->writernode ) $this->writernode->q->write($a);
-	}
+		$this->q->write($a); }
 	function tap( $env, $str ) {
 	}
 };
 
-class domegg {
-	public $tsq, $tsr;
-	public $writernode;
+class tag_egg {
+	public $tsq, $tsr, $tsw, $tsidents, $tsperfectbliss;
 
-	public $tgcnode;
-	public $tgc, $dn;
+	public $tgc, $dn, $path;
 
 	public $q;
+	function __construct( $dn, $path ) {
+		$this->dn = $dn;
+		$this->path = $path;
+	}
 	function write($r) { 
-		if( $this->writernode ) $this->writernode->q->write($r); 
+		$this->q->write($r); 
 	}
 	function tap( $env, $str ) {
-		$w = 0; $b = $f = $a = $c = null;
+		$w = $h = 0; $b = $f = $a = $c = null;
 		switch( $this->dn->nodeType ) {
 		case 3:
-			$this->tgcnode->tgc->consume_text( $env, $this->dn->data );
+			$env->diplomat('tgc')->tgc->consume_text( $env, $this->dn->data );
+			//$this->tgcnode->tgc->consume_text( $env, $this->dn->data );
 			break;
 		case 9: 
 			if( $str ) {
@@ -108,125 +215,98 @@ class domegg {
 			break;
 		default:
 			while( $str ) {
-				$a = $this->tgcnode;
-				do switch( $a->tgc->consume( $env, true, $this->dn ) ) {
-				case 0: 
-					$a = $a->tgcnode;
-					if( $a == null ) {
+				$h = count( $env->diplomats[0]['tgc'] );
+				do {
+					$a = $env->diplomats[0]['tgc'][$h-1]; 
+					switch( $a->tgc->consume( $env, true, $this->dn ) ) {
+					case 0: 
+						$h -= 1;
+						if( $h == 0 ) {
+						//$a = $a->tgcnode;
+						//if( $a == null ) {
+							$env->unhandled_tag( $this->dn );
+							return;
+						}
+						break;
+					case 1: default:
+						return;
+					}
+				} while(1);
+			}
+			$h = count( $env->diplomats[0]['tgc'] );
+			// $this->tgcnode;
+			while(1) {
+				$a = $env->diplomats[0]['tgc'][$h-1];
+				switch( $a->tgc->consume( $env, false, $this->dn ) ) {
+				case 0:
+					$h = $h - 1;
+					if( $h == 0 ) {
+					//$a = $a->tgcnode;
+					//if( $a == null ) {
 						$env->unhandled_tag( $this->dn );
 						return;
 					}
 					break;
-				case 1: default:
-					//if( $this->tgcnode == $env->stack ) {
-					//	if( $this->tgcnode->tgc->repeat($env) ) {
-					//		$env->enqueue( $this, 1, $this->q != null );
-					//	}
-					//}
-					return;
-				} while(1);
-			}
-			$a = $this->tgcnode;
-			while(1) switch( $a->tgc->consume( $env, false, $this->dn ) ) {
-			case 0:
-				$a = $a->tgcnode;
-				if( $a == null ) {
-					$env->unhandled_tag( $this->dn );
-					return;
-				}
-				break;
-			case 1: goto _1;
-			case 2: goto _2;
-			case 3: default: 
-				$env->enqueue( $this, 1 );
-				$d = new subrootdomegg;
-				$this->tgc = $a->tgc->NF->c;
-				$d->tgcnode = $this;
-				$d->dn = $a->tgc->NF->T;
-				if( $a->tgc->NF->q == $env ) {
-					$d->writernode = $this->writernode;
-				} else {
-					$this->q = $a->tgc->NF->q;
-					$d->writernode = $this;
-				}
+				case 1: goto _1;
+				case 2: goto _2;
+				case 3: default:
+					$this->tgc = $a->tgc->NF->c;
+					if( $a->tgc->NF->q == $env ) {
+						//$d->writernode = $this->writernode;
+						$env->enqueue_surreal( $this, [ 'tgc' ] );
+					} else {
+						$this->q = $a->tgc->NF->q;
+						$env->enqueue_surreal( $this, [ 'tgc', 'earring' ] );
+						//$d->writernode = $this;
+					}
+					$d = new tgc_tag_egg;
+					$d->dn = $a->tgc->NF->T;
+					$d->path = $this->path;
 
-				$env->enqueue( $d, 0 );
-				return;
-			case 4:
-				$env->enqueue( $a->tgc->NF, 0 );
-				return;
+					//$d->tgcnode = $this;
+					$env->enqueue_surreal( $d, [ ] );
+					return;
+				case 4:
+					$env->enqueue_surreal( $a->tgc->NF, [ ] );
+					return;
+				}
 			}
 		}
 		return;
 	_1:
-		$env->enqueue( $this, 1, 0 );
+		$env->enqueue_surreal( $this, [ ] );
 		return;
 	_2:
-		$env->enqueue( $this, 1 );
+		$env->enqueue_surreal( $this, [ ] );
 	_2b:
+		sane_enqueue_subtree( $env, $this->dn, $this->path );
+		return;
 		for( $w = $this->dn->childNodes->length ; $w > 0 ; $w -= 1 ) {
 			$c = $this->dn->childNodes->item($w-1);
-			$a = new domegg;
+			$a = new tag_egg( $c, $this->path ); 
+			//domegg;
 			$a->tgcnode = $this->tgcnode;
-			$a->dn = $c;
+			//$a->dn = $c;
 			$a->writernode = $this->writernode;
-			$env->enqueue( $a, 0 );
-		}
-		return;
-	_3:
-		$d = new domegg;
-		$d->tgcnode = $d;
-		$d->parent_tgcnode = $this->tgcnode;
-		$d->tgc = $f; 
-		$d->dn = $b;
-		$env->enqueue( $d, 0, $d->q != null );
-		for( $w = $b->childNodes->length ; $w > 0 ; $w -= 1 ) {
-			$c = $b->childNodes->item($w-1);
-			$a = new domegg;
-			$a->tgcnode = $d;
-			$a->dn = $c;
-			$env->enqueue( $a, 0 );
-		}
-		return;
-	_4:
-		$b = $this->NF->T;
-		for( $w = $b->childNodes->length ; $w > 0 ; $w -= 1 ) {
-			$c = $b->childNodes->item($w - 1);
-			$a = new domegg;
-			$a->tgcnode = $a;
-			$a->parent_tgcnode = $this->tgcnode;
-			$a->tgc = $this->NF->c;
-			$a->dn = $c;
-			$env->enqueue( $a, 0, 0 );
+			$env->enqueue_surreal( $a, [ ] );
 		}
 		return;
 	}
 }
 
-function eggsgml_2( $env ) {
-	while( $env->stack ) {
-		$c = $env->stack;
-		$d = $env->repeat;
-		$env->repeat = $c->tsr;
-		$env->stack = $c->tsq;
-
-		$c->tap( $env, $d );
-	}
-}
-
-function eggsgml( $F ) {
+function eggsgml( $lc, $F, $path ) {
 	$c = null;
-	$env = new chicken();
-	$c = new module1egg;
-	$c->tgc = $F->c;
+	$env = new chicken($lc);
+	$c = new tgc_egg($F->c);
 	$c->q = $F->q;
-	$env->enqueue( $c, 0 );
-	$c = new domegg;
-	$c->tgcnode = $env->stack;
-	$c->dn = $F->T;
-	$c->writernode = $env->stack;
-	$env->enqueue( $c, 0 );
-	eggsgml_2( $env );
+	$env->enqueue_surreal( $c, [ 'tgc', 'earring' ] );
+	$c = new tag_egg( $F->T, $path );
+	//domegg;
+	//$c->tgcnode = $env->stack;
+	//$c->dn = $F->T;
+	//$c->writernode = $env->stack;
+	$env->enqueue_surreal( $c, [ ] );
+	$env->talk_yourself_to_sleep();
 }
 
 

@@ -113,6 +113,7 @@ class libconfig {
 };
 
 class docloader_egg {
+	public $tsq, $tsr, $tsw, $tsidents, $tsperfectbliss;
 	public $d, $end, $doc;
 	function __construct($env,$extension,$altextension,$extoptional,$doc,$self_href) {
 	$c = $m = null; $b = 0;
@@ -163,11 +164,12 @@ n:		header('Last-Modified: ' . date('r',$this->env->scriptnow));
 		goto m;
 	}
 	enqueue_modules( $eggenv, $this->doc, $this->env );
-	$k = new domegg;
-	$k->tgcnode = $eggenv->stack;
-	$k->writernode = ( $eggenv->stack->q ? $eggenv->stack : $eggenv->stack->writernode );
-	$k->dn = $this->d;
-	$eggenv->enqueue( $k, 0 );
+	$k = new tag_egg( $this->d, $this->doc );
+	//domegg;
+	//$k->tgcnode = $eggenv->stack;
+	//$k->writernode = ( $eggenv->stack->q ? $eggenv->stack : $eggenv->stack->writernode );
+	//$k->dn = $this->d;
+	$eggenv->enqueue_surreal( $k, [ ] );
 
 	//$k = newframe(new tgc_generic(dirname($doc,1),$env), new echo_out, $d);
 	//if( ! $env->nodoctype ) {
@@ -198,6 +200,10 @@ function check_shipyard_auth($env,$u) {
 
 class tgc_templates {
 	public $NF;
+	public $lc;
+	function __construct($lc) {
+		$this->lc = $lc;
+	}
 	function self_protocol($w) {
 		if( attribute_exists( $w, "redirect-to-ssl" ) || array_key_exists('HTTPS',$_SERVER) ) {
 			return 'https'; }
@@ -210,11 +216,11 @@ class tgc_templates {
 	function consume_text( $q, $x ) {
 		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
 	function consume( $q, $end, $w ) {
-		$env = 00;
+		$env = null;
 		if( $w->nodeName == 'main' ) {
 			if( $end ) return 1;
 			$path = $_SERVER['DOCUMENT_ROOT'];
-			$env = new libconfig;
+			$env = $this->lc;
 			$env->secrets_path = $env->expanddirpath( $w->getAttribute('secrets-path') );
 			$env->urlpath = $_GET['t'];
 			$env->nodoctype = true;
@@ -257,15 +263,17 @@ class tgc_templates {
 };
 
 function main() {
+	$m = 00; $k = $d = $lc = null;
 	$m = $_SERVER['DOCUMENT_ROOT'];
 	if( file_exists( $m . '/templates_config.xml' ) ) {
 		$d = load_eggsgml_file( $m . '/templates_config.xml' );
 	} else {
 		$d = load_eggsgml_file( 'templates_config.xml' );
 	}
-	$k = newframe(new tgc_templates, new echo_out, $d);
+	$lc = new libconfig;
+	$k = newframe(new tgc_templates($lc), new echo_out, $d);
 	$k->P = null;
-	eggsgml($k);
+	eggsgml($lc,$k,'');
 }
 
 main();

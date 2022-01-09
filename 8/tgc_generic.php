@@ -82,9 +82,20 @@ function load_module_frame( $path, $env, $w, $q ) {
 	return newframe( $a, $q, $w);
 }
 
+//function load_module_frame_api( $path, $env, $w, $q ) {
+//	$a = include $_SERVER['DOCUMENT_ROOT'] . '/' . $env->api . '/' . $w->getAttribute('path');
+//	$a->initialize( $path, $env );
+//	return newframe( $a, $q, $w );
+//}
+
 function load_module_frame_api( $path, $env, $w, $q ) {
 	$a = include $_SERVER['DOCUMENT_ROOT'] . '/' . $env->api . '/' . $w->getAttribute('path');
-	$a->initialize( $path, $env );
+	if( attribute_exists( $w, 'egg' ) ) {
+		$a->initialize( $path, $w );
+		return $a;
+	} else {
+		$a->initialize( $path, $env );
+	}
 	return newframe( $a, $q, $w );
 }
 
@@ -173,11 +184,13 @@ class tgc_generic {
 			return 2; }
 		if( $w->nodeName == 'module' ) {
 			if ($end) return 1;
-			if( attribute_exists( $w, 'api' ) ) {
+			if( attribute_exists( $w, 'api' ) || attribute_exists( $w, 'egg' ) ) {
+			//if( attribute_exists( $w, 'api' ) ) {
 				$this->NF = load_module_frame_api($this->path,$this->env,$w,$q);
 			} else {
 				$this->NF = load_module_frame($this->path,$this->env,$w,$q);
 			}
+			if( attribute_exists( $w, 'egg' ) ) return 4;
 			return 3; }
 		if( $w->nodeName == 'include' ) {
 			if ($end) return 1;
@@ -252,30 +265,6 @@ class tgc_generic {
 		$this->env->write_end_of_tag($q,$w->nodeName);
 		return 2; }
 }
-/* This is dedicated to a person who was at the awkward age which makes us uncertain whether to refer
- * to her as a girl or a woman, who didn't have enough sense to tell a boy who had intended to grow his 
- * hair long but found it always in his face, to learn to tie a shoelace behind his head. */
-class tgc_generic_excuse_me {
-	public $path, $env;
-	function __construct($path,$env) {
-		$this->path = $path;
-		$this->env = $env;
-	}
-	function start( $q ) {
-		return 0; }
-	function repeat( $q ) {
-		return 0; }
-	function consume_text( $q, $x ) {
-		$q->write(str_replace("<","&lt;", str_replace( "&", "&amp;", $x ) ) ); }
-	function consume( $q, $end, $w ) {
-		if( $w->nodeName == 'play' ) {
-			if ($end) return 1;
-			if( array_key_exists( $w->getAttribute('id'), $this->env->clips ) ) {
-				$this->NF = newframe(new tgc_generic_but($this->env->clip_path[$w->getAttribute('id')],$this->env),$q,$this->env->clips[$w->getAttribute('id')]);
-				return 3; }
-			return 1; }
-		return 0; }
-}
 
 class tgc_generic_but {
 	public $path, $env;
@@ -322,11 +311,13 @@ class tgc_generic_but {
 			return 2; }
 		if( $w->nodeName == 'module' ) {
 			if ($end) return 1;
-			if( attribute_exists( $w, 'api' ) ) {
+			if( attribute_exists( $w, 'api' ) || attribute_exists( $w, 'egg' ) ) {
+			//if( attribute_exists( $w, 'api' ) ) {
 				$this->NF = load_module_frame_api($this->path,$this->env,$w,$q);
 			} else {
 				$this->NF = load_module_frame($this->path,$this->env,$w,$q);
 			}
+			if( attribute_exists( $w, 'egg' ) ) return 4;
 			return 3; }
 		if( $w->nodeName == 'include' ) {
 			if ($end) return 1;
