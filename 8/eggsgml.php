@@ -87,6 +87,8 @@ class chicken {
 		$j = null;
 		foreach( $idents as $j ) {
 			array_pop( $this->diplomats[0][$j] );
+			if( count( $this->diplomats[0][$j] ) == 0 ) {
+				unset( $this->diplomats[0][$j] ); }
 		}
 	}
 };
