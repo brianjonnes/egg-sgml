@@ -216,9 +216,15 @@ class tgc_generic {
 			$m = file_get_contents($this->path . "/" . $w->getAttribute('path'));
 			$q->write(str_replace("\n", "<br/>", str_replace("\t", "&nbsp; &nbsp; &nbsp; ", str_replace("<","&lt;", str_replace( "&", "&amp;", $m ) ) ) ) );
 			return 2; }
+		//if( $w->nodeName == 'you.redirect_query_string' ) {
+		//	if ($end) return 1;
+		//	return 1; }
 		if( $w->nodeName == 'redirect' ) {
 			if ($end) return 1;
-			header('Location:' . $w->getAttribute('location'));
+			$a = $w->getAttribute('location');
+			if( attribute_exists( $w, 'withquery' ) && array_key_exists('REDIRECT_QUERY_STRING',$_SERVER) ) {
+				$a .= '?' . str_replace('#','%2B',$_SERVER['REDIRECT_QUERY_STRING']); }
+			header('Location:' . $a);
 			return 1; }
 		if( $w->nodeName == 'record' ) {
 			if ($end) return 1;
@@ -233,8 +239,17 @@ class tgc_generic {
 			return 1; }
 		if( $w->nodeName == 'servervariable' ) {
 			if ($end) return 1;
-			$q->write(str_replace('<','&lt;',str_replace('&','&amp;',$_SERVER[$w->getAttribute('name')])));
-			return 1; }
+			if( array_key_exists($w->getAttribute('name'),$_SERVER) ) {
+				if( attribute_exists( $w, 'exists-yn' ) ) {
+					$q->write('yes');
+				} else {
+					$q->write(sr_amp_lt($_SERVER[$w->getAttribute('name')]));
+				}
+			} else {
+				if( attribute_exists( $w, 'exists-yn' ) ) {
+					$q->write('no'); }
+			}
+			return 2; }
 		if( $w->nodeName == 'shipyard_login_failed' ) {
 			if ($end) return 1;
 			if( array_key_exists( 'shipyard', $_GET ) ) return 2;
