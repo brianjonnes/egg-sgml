@@ -103,11 +103,11 @@ class casserole {
 				//if( ! $this->NF ) return 1;
 				return;
 			}
-			if( $_GET['t'] == '/' . $w->getAttribute('rootdoc') ) {
-				header('Location:' . $this->self_protocol($w) . '://' . $_SERVER['HTTP_HOST'] . '/' );
+			if( $_GET['t'] == '/' . $dn->getAttribute('rootdoc') ) {
+				header('Location:' . $this->self_protocol($dn) . '://' . $_SERVER['HTTP_HOST'] . '/' );
 				return;
 			}
-			$this->plate = new casserole_dish( $libconfig, $dn->getAttribute('extension'), $dn->getAttribute('alt-extension'), attribute_exists($dn,'extension-optional'), $dnpath . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );
+			$this->plate = casserole_dish( $libconfig, $dn->getAttribute('extension'), $dn->getAttribute('alt-extension'), attribute_exists($dn,'extension-optional'), $dnpath . strtolower(str_replace('.','',$_GET['t'])), strtolower($_GET['t']) );
 			//if( ! $this->NF ) return 1;
 			return;
 		}
