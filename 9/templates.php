@@ -1,4 +1,5 @@
 <?php
+# Copyright: GPL; Copyleft: Technews Publishing, South Africa.
 
 include '../1/version.php';
 include 'perfect.php';
